@@ -1,0 +1,658 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>无约束优化算法总结 | Nanjunxiao</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="nanjunxiao">
+    
+
+    
+    <meta name="description" content="机器学习的优化目标一般可以表示成Obj &#x3D; Loss + regularization，有了这样一个优化目标剩下就是如何求解最小化问题了。机器学习绝大多数Obj都是非线性的，很难有形式解，这时需要各种近似优化算法来求Obj的极小化。如果Obj是凸函数，那么极小值等价于全局最小值，否则极小值未必是全局最优值。这里将Obj抽象为f(x)，并假设f为凸函数，且二阶连续可导。 梯度下降法　　这个很常见">
+<meta property="og:type" content="article">
+<meta property="og:title" content="无约束优化算法总结">
+<meta property="og:url" content="http://nanjunxiao.github.io/2015/08/03/%E6%97%A0%E7%BA%A6%E6%9D%9F%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Nanjunxiao">
+<meta property="og:description" content="机器学习的优化目标一般可以表示成Obj &#x3D; Loss + regularization，有了这样一个优化目标剩下就是如何求解最小化问题了。机器学习绝大多数Obj都是非线性的，很难有形式解，这时需要各种近似优化算法来求Obj的极小化。如果Obj是凸函数，那么极小值等价于全局最小值，否则极小值未必是全局最优值。这里将Obj抽象为f(x)，并假设f为凸函数，且二阶连续可导。 梯度下降法　　这个很常见">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/niudunfa.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/yijieerjieduibi.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/niudunfasuanfatu.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/zuniniudunfasuanfatu.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/dfpsuanfa.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/bfgs1suanfa.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/Sherman-Morrison.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/bfgs2suanfa.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/jisijieguo.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/lbfgssuanfa.png">
+<meta property="article:published_time" content="2015-08-03T14:10:56.000Z">
+<meta property="article:modified_time" content="2020-01-26T08:17:15.098Z">
+<meta property="article:author" content="nanjunxiao">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="LBFGS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://nanjunxiao.github.io/img/niudunfa.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Nanjunxiao" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/%02.css">
+<link rel="stylesheet" href="/.css">
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/author.jpg" alt="Nanjunxiao" title="Nanjunxiao"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Nanjunxiao">Nanjunxiao</a></h1>
+				<h2 class="blog-motto">ML+OR真香</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:nanjunxiao.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/08/03/无约束优化算法总结/" title="无约束优化算法总结" itemprop="url">无约束优化算法总结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="nanjunxiao" target="_blank" itemprop="author">nanjunxiao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-08-03T14:10:56.000Z" itemprop="datePublished"> 发表于 2015-08-03</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#梯度下降法"><span class="toc-number">1.</span> <span class="toc-text">梯度下降法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#牛顿法"><span class="toc-number">2.</span> <span class="toc-text">牛顿法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#拟牛顿法"><span class="toc-number">3.</span> <span class="toc-text">拟牛顿法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-DFP算法"><span class="toc-number">3.0.1.</span> <span class="toc-text">1. DFP算法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-BFGS算法"><span class="toc-number">3.0.2.</span> <span class="toc-text">2. BFGS算法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-L-BFGS算法"><span class="toc-number">3.0.3.</span> <span class="toc-text">3.L-BFGS算法</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">4.</span> <span class="toc-text">后记</span></a></li></ol>
+		
+		</div>
+		
+		<p>　　机器学习的优化目标一般可以表示成<strong>Obj = Loss + regularization</strong>，有了这样一个优化目标剩下就是如何求解最小化问题了。机器学习绝大多数Obj都是非线性的，很难有形式解，这时需要各种近似优化算法来求Obj的极小化。如果Obj是凸函数，那么极小值等价于全局最小值，否则极小值未必是全局最优值。这里将Obj抽象为f(x)，并<strong>假设f为凸函数，且二阶连续可导</strong>。</p>
+<h2 id="梯度下降法"><a href="#梯度下降法" class="headerlink" title="梯度下降法"></a>梯度下降法</h2><p>　　这个很常见也很简单，参数修正方向就是负梯度方向，步长可以定长也可以单独优化，即Xk+1 = Xk – lambda*grad.</p>
+<h2 id="牛顿法"><a href="#牛顿法" class="headerlink" title="牛顿法"></a>牛顿法</h2><p>　　牛顿法最初就是用来迭代求解方程根，想必大家高中时候都接触过。原理是利用泰勒公式在x0处一阶展开，即f(x)=f(x0)+f’(x0)(x-x0)。求解方程f(x)=0得，x=x1=x0-f(x0)/f’(x0)，由于泰勒展开只是近似等价，所以这里的x1也只是比x0更接近f(x)=0的近似解，所以需要不断的迭代来逼近真实x。牛顿法通过下图一目了然：<br>　　　　　　　　　　　　　　　　<img src="../../../../img/niudunfa.png" alt=""></p>
+<p>　　牛顿法不是用来求根的吗，那怎么用来求最优化？直观的，求f(x)的最小值，必要条件是f’(x)=0，so，可以用牛顿法来求f’(x)=0的解！</p>
+<p>　　下面还是来公式推导下，还是利用泰勒公式,二阶展开，f(x+deltax)=f(x)+f’(x)deltax+1/2f’’(x)deltax^2。当deltax无限趋近于0，上面式子近似为f’(x)deltax+f’’(x)deltax^2=0，即deltax = - f’(x)/f’’(x)。所以迭代公式为xk+1 = xk-f’(x)/f’’(x)。</p>
+<p>　　牛顿法比梯度下降更容易收敛，速度更快，一般认为牛顿法利用了曲线更多的信息（二阶导数）。根据wiki上的解释，从几何上说，牛顿法就是用一个二次曲面去拟合你当前所处位置的局部曲面，而梯度下降法是用一个平面去拟合当前的局部曲面，通常情况下，二次曲面的拟合会比平面更好，所以牛顿法选择的下降路径会更符合真实的最优下降路径（<em>from 知乎</em>）。如下形象图，红色曲线是利用牛顿法迭代求解，绿色曲线是利用梯度下降法求解。<br>　　　　　　　　　　　　　　　　　　<img src="../../../../img/yijieerjieduibi.png" alt=""></p>
+<p>　　扩展下对于多元x，梯度变为梯度向量，二阶导变为海森矩阵(Hessian matrix)，分别用字母g和H表示，迭代方向变为-H^-1g称为牛顿方向。</p>
+<p>　　　　　　<img src="../../../../img/niudunfasuanfatu.png" alt=""><br>　　　　　　<img src="../../../../img/zuniniudunfasuanfatu.png" alt=""></p>
+<p>　　阻尼牛顿法相比牛顿法增加了步长lambda的精确搜索。</p>
+<h2 id="拟牛顿法"><a href="#拟牛顿法" class="headerlink" title="拟牛顿法"></a>拟牛顿法</h2><p>　　牛顿法存在两个主要缺点：</p>
+<p>　　1. 需要计算海森矩阵和它的逆，计算复杂度高而且空间复杂度为O(N^2)<br>　　2. 有时海森矩阵无法保证正定，算法失效。</p>
+<p>　　针对上面问题，研究者提出拟牛顿法(Quasi-Newton methond)，基本思想是不直接求海森阵或其逆，而是通过梯度构造出海森矩阵(或其逆)的近似，而且是正定对称的。</p>
+<p>　　符号上用B表示对海森矩阵H的近似，D表示对逆矩阵H^-1的近似，Sk=Xk+1-Xk，yk=gk+1-gk。</p>
+<p>　　各种拟牛顿法都需要满足<strong>拟牛顿条件</strong>：yk=Bk+1<em>Sk或者Sk=Dk+1</em>yk。下面大致介绍下DFP/BFGS/L-BFGS拟牛顿算法。</p>
+<h4 id="1-DFP算法"><a href="#1-DFP算法" class="headerlink" title="1. DFP算法"></a>1. DFP算法</h4><p>　　　　　　<img src="../../../../img/dfpsuanfa.png" alt=""></p>
+<p>　　在步骤3还需要计算gk+1，下同。</p>
+<h4 id="2-BFGS算法"><a href="#2-BFGS算法" class="headerlink" title="2. BFGS算法"></a>2. BFGS算法</h4><p>　　　　　　<img src="../../../../img/bfgs1suanfa.png" alt=""></p>
+<p>　　这时从海森阵计算逆计算量也不小，通过Sherman-Morrison公式，可以直接得到B的逆的递推关系，将B的逆替换为D，这样我们得到另一种BFGS。</p>
+<p>　　　　　　　　　　<img src="../../../../img/Sherman-Morrison.png" alt=""><br>　　　　　　<img src="../../../../img/bfgs2suanfa.png" alt=""></p>
+<h4 id="3-L-BFGS算法"><a href="#3-L-BFGS算法" class="headerlink" title="3.L-BFGS算法"></a>3.L-BFGS算法</h4><p>　　上面的拟牛顿法都没有解决<strong>空间复杂度O(N^2)</strong>的问题，为了解决该问题，我们就不能存储海森或其逆矩阵了。想想时间换空间，我们就只能存储生成海森的s和y向量了，需要海森时计算得出。而且，向量s和y也不是所有都存，而是固定存最新的m组。每次计算D时，只利用最新的m组s和y，这样空间复杂度降到了<strong>O(mN)</strong>.</p>
+<p>　　若记ρk=1/yk^T*sk，Vk=I-ρkyksk^T，算法2.3的步骤6可以近似为<br>　　　　　　<img src="../../../../img/jisijieguo.png" alt=""></p>
+<p>　　由于V和ρ标号增加方向相反所以需要前后分别遍历，总计两次遍历才能计算D。</p>
+<p>　　由BFGS算法流程可知，求Dk*gk获取搜索方向才是最终目的，因此论文(<em>updating quasi-newton matrices with limited storage</em>)设计出了一种Dk*gk快速算法：</p>
+<p>　　　　　　　　<img src="../../../../img/lbfgssuanfa.png" alt=""></p>
+<p>　　注意倒数第二行beta应该是i下标，最后算出的rL即为Dk*gk的值。</p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>　　本文算法截图来自博客(<a href="http://blog.csdn.net/itplus/article/details/21897715" target="_blank" rel="noopener">http://blog.csdn.net/itplus/article/details/21897715</a>) ,感谢原作者的分享。</p>
+<p>　　上面讨论的都是f(x)可导的情况，针对不可导还有一些变种算法，比如OWL-QN，有时间再研究总结。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/机器学习/">机器学习</a><a href="/tags/LBFGS/">LBFGS</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://nanjunxiao.github.io/2015/08/03/%E6%97%A0%E7%BA%A6%E6%9D%9F%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/" data-title="无约束优化算法总结 | Nanjunxiao" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/08/05/GBM之GBRT总结/" title="GBM之GBRT总结">
+  <strong>上一篇：</strong><br/>
+  <span>
+  GBM之GBRT总结</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/08/01/搜索引擎结果自动化抽取通用算法/"  title="搜索引擎结果自动化抽取通用算法">
+ <strong>下一篇：</strong><br/> 
+ <span>搜索引擎结果自动化抽取通用算法
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#梯度下降法"><span class="toc-number">1.</span> <span class="toc-text">梯度下降法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#牛顿法"><span class="toc-number">2.</span> <span class="toc-text">牛顿法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#拟牛顿法"><span class="toc-number">3.</span> <span class="toc-text">拟牛顿法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-DFP算法"><span class="toc-number">3.0.1.</span> <span class="toc-text">1. DFP算法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-BFGS算法"><span class="toc-number">3.0.2.</span> <span class="toc-text">2. BFGS算法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-L-BFGS算法"><span class="toc-number">3.0.3.</span> <span class="toc-text">3.L-BFGS算法</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">4.</span> <span class="toc-text">后记</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/机器学习/NLP/" title="NLP">NLP<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/project/" title="project">project<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/机器学习/推荐/" title="推荐">推荐<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/机器学习/" title="机器学习">机器学习<sup>14</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kaggle/" title="kaggle">kaggle<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NLP/" title="NLP">NLP<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/LDA/" title="LDA">LDA<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GBRT/" title="GBRT">GBRT<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/xgboost/" title="xgboost">xgboost<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/强化学习/" title="强化学习">强化学习<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Actor-Critic/" title="Actor-Critic">Actor-Critic<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TREC/" title="TREC">TREC<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ranking-SVM/" title="Ranking SVM">Ranking SVM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TensorFlow/" title="TensorFlow">TensorFlow<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Gibbs-Sampling/" title="Gibbs Sampling">Gibbs Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/architecture/" title="architecture">architecture<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SVM/" title="SVM">SVM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/LR/" title="LR">LR<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BP/" title="BP">BP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NB/" title="NB">NB<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/EM/" title="EM">EM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GMM/" title="GMM">GMM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HMM/" title="HMM">HMM<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.52ml.net" target="_blank" title="我爱机器学习">我爱机器学习</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.52nlp.cn/" target="_blank" title="我爱自然语言处理">我爱自然语言处理</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://cos.name/" target="_blank" title="统计之都">统计之都</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.flickering.cn/" target="_blank" title="腾讯广点通">腾讯广点通</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.searchtb.com/?spm=0.0.0.0.9jn6ZC" target="_blank" title="搜索技术博客－淘宝">搜索技术博客－淘宝</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://stblog.baidu-tech.com/" target="_blank" title="百度搜索研发部官方博客">百度搜索研发部官方博客</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://tech.meituan.com/" target="_blank" title="美团技术博客">美团技术博客</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/itplus?viewmode=contents" target="_blank" title="peghoty机器学习">peghoty机器学习</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://coolshell.cn/" target="_blank" title="陈皓">陈皓</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/solstice/" target="_blank" title="陈硕">陈硕</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://mindhacks.cn/" target="_blank" title="刘未鹏">刘未鹏</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 此生多勉强 此身越重洋 <br/>
+			轻描时光漫长低唱语焉不详</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/nanjunxiao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/Junxiao Nan" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		<a href="http://www.zhihu.com/people/louis-90" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+		<a href="mailto:nanjunxiao@163.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+	
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="nanjunxiao">nanjunxiao</a>
+		
+		
+		</p>
+		<!--add counter by nanjunxiao, 2015-08-14-->
+		<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+		</script>
+		<span id="busuanzi_container_site_pv">
+			总访问量<span id="busuanzi_value_site_pv"></span>次
+		</span>
+		<br>
+		<span id="busuanzi_container_page_pv">
+			总阅读量<span id="busuanzi_value_page_pv"></span>次
+		</span>
+		<!--add counter by nanjunxiao, 2015-08-14-->
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

@@ -1,0 +1,652 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Session Track at TREC 2012回顾 | Nanjunxiao</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="nanjunxiao">
+    
+
+    
+    <meta name="description" content="Session Track是TREC的一个子任务，目标是根据用户和搜索引擎的交互Session信息提高检索质量。当时抱陈博大腿一起做的这个任务，学到了不少东西。 数据　　Session Track提供了4种测试数据RL1-RL4，其中每一种都比前一种多一个信息。RL1只有最后需要查询的query词组，RL2相比RL1多了前几次session的query词组，RL3相比RL2多了前几次sessi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Session Track at TREC 2012回顾">
+<meta property="og:url" content="http://nanjunxiao.github.io/2015/08/22/Session-Track-at-TREC-2012%E5%9B%9E%E9%A1%BE/index.html">
+<meta property="og:site_name" content="Nanjunxiao">
+<meta property="og:description" content="Session Track是TREC的一个子任务，目标是根据用户和搜索引擎的交互Session信息提高检索质量。当时抱陈博大腿一起做的这个任务，学到了不少东西。 数据　　Session Track提供了4种测试数据RL1-RL4，其中每一种都比前一种多一个信息。RL1只有最后需要查询的query词组，RL2相比RL1多了前几次session的query词组，RL3相比RL2多了前几次sessi">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/sessiontrack/RL1.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/sessiontrack/RL2.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/sessiontrack/RL3.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/sessiontrack/RL4.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/sessiontrack/features.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/sessiontrack/methods.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/sessiontrack/result.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/sessiontrack/rankingsvmobj.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/sessiontrack/svm_light.png">
+<meta property="article:published_time" content="2015-08-22T10:48:19.000Z">
+<meta property="article:modified_time" content="2020-01-26T08:17:15.092Z">
+<meta property="article:author" content="nanjunxiao">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="TREC">
+<meta property="article:tag" content="Ranking SVM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://nanjunxiao.github.io/img/sessiontrack/RL1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Nanjunxiao" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/%02.css">
+<link rel="stylesheet" href="/.css">
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/author.jpg" alt="Nanjunxiao" title="Nanjunxiao"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Nanjunxiao">Nanjunxiao</a></h1>
+				<h2 class="blog-motto">ML+OR真香</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:nanjunxiao.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/08/22/Session-Track-at-TREC-2012回顾/" title="Session Track at TREC 2012回顾" itemprop="url">Session Track at TREC 2012回顾</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="nanjunxiao" target="_blank" itemprop="author">nanjunxiao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-08-22T10:48:19.000Z" itemprop="datePublished"> 发表于 2015-08-22</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#数据"><span class="toc-number">1.</span> <span class="toc-text">数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#我们的做法"><span class="toc-number">2.</span> <span class="toc-text">我们的做法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结果"><span class="toc-number">3.</span> <span class="toc-text">结果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ranking-SVM"><span class="toc-number">4.</span> <span class="toc-text">Ranking SVM</span></a></li></ol>
+		
+		</div>
+		
+		<p>　　Session Track是TREC的一个子任务，目标是根据用户和搜索引擎的交互Session信息提高检索质量。当时抱陈博大腿一起做的这个任务，学到了不少东西。</p>
+<h2 id="数据"><a href="#数据" class="headerlink" title="数据"></a>数据</h2><p>　　Session Track提供了4种测试数据RL1-RL4，其中每一种都比前一种多一个信息。RL1只有最后需要查询的query词组，RL2相比RL1多了前几次session的query词组，RL3相比RL2多了前几次session的部分query结果，RL4相比RL3多了点击文档和停留时间信息。下面是2011年的部分数据示例。<br>　　　　　　　　<img src="../../../../img/sessiontrack/RL1.png" alt="RL1"><br>　　　　　　　　<img src="../../../../img/sessiontrack/RL2.png" alt="RL2"><br>　　　　　　　　<img src="../../../../img/sessiontrack/RL3.png" alt="RL3"><br>　　　　　　　　<img src="../../../../img/sessiontrack/RL4.png" alt="RL4"></p>
+<p>　　Session track目标是想检验利用query的增量prior信息是否能持续提高检索效果，理想情况应该是效果RL4&gt;RL3&gt;RL2&gt;RL1，其实这也应该是客观结果。</p>
+<h2 id="我们的做法"><a href="#我们的做法" class="headerlink" title="我们的做法"></a>我们的做法</h2><p>　　针对RL1没有什么附加信息，只能直接利用检索系统拉结果，这也是最终的召回结果了，后面只是在此基础上进行重排序而已。这里我们使用的是实验室的检索系统，说实话在这个任务上效果不太好。</p>
+<p>　　RL2由于多了prior的query信息，所以我们可以参考查询扩展重构query，将所有的query term按照exp权重加权累加，得到一个新的带权重的query term list，然后和RL1结果计算BM25重排序。</p>
+<p>　　RL3由于多了部分结果，我们可以基于此构建虚拟文档，利用该虚拟文档和RL1结果计算cosine重排序。</p>
+<p>　　RL4多了点击和停留时间信息，这个没有太好的想法，参考了BUPT的方法，通过文档和被点击文档的相似度换算出停留时间，再重排序。</p>
+<p>　　接下来我们采用pairwise的ranking svm融合上面的各种得分来学习重排序模型，利用2011年的relevance judgments结果数据进行训练，将模型应用到2012年数据输出score进行排序。2011结果数据中label包含-2/0/1/2/3，分布代表spam/not relevant/relevant/high relevant/navigational。</p>
+<p>　　下面是比较重头的特征了，这里我们没有采用标题/url长度等raw feature，使用的是各种similarity等high level feature，如下图所示<br>　　　　　　　　<img src="../../../../img/sessiontrack/features.png" alt=""></p>
+<p>　　最终我们提交了3组结果，每组包括RL1-RL4四个结果，具体方法和特征如下表所示：<br>　　　　　　　　<img src="../../../../img/sessiontrack/methods.png" alt=""></p>
+<h2 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h2><p>　　从下图可知RL4最好NDCG@10结果为0.2857，比直接通过检索系统返回结果0.1586提高了80.14%，可见ranking svm能利用prior session信息，很大程度的提高检索质量。直接检索结果比较差，如果该结果提高，再加入标题/url长度等各种raw feature，效果应该还可以提高。<br>　　　　　　　　<img src="../../../../img/sessiontrack/result.png" alt=""></p>
+<h2 id="Ranking-SVM"><a href="#Ranking-SVM" class="headerlink" title="Ranking SVM"></a>Ranking SVM</h2><p>　　Ranking svm是一种pairwise的排序算法，它将排序问题转化为一个分类问题，在给定query下，如果文档d1比d2更相关，我们把pair&lt;d1,d2&gt;作为一个新的正样本，否则作为一个负样本。</p>
+<p>　　将排序问题转化为分类问题后，学习原理同svm。Ranking svm目标是学习一个排序函数f(x)=w*x+b，如果xi比xj更相关，我们希望f(xi)&gt;f(xj)，转换为文档对表示就是&lt;w,xi-xj&gt; &gt; 0。ranking svm的优化目标和svm类似，差别只在于svm是单点，ranking svm是pair：<br>　　　　　　　　<img src="../../../../img/sessiontrack/rankingsvmobj.png" alt=""> </p>
+<p>　　其中w为参数向量, x为文档的特征,y为文档对之间的相对相关性, ξ为松弛变量，m为pair个数。</p>
+<p>　　产生pair代码如下图所示<br>　　　　　　　　　　　　<img src="../../../../img/sessiontrack/svm_light.png" alt=""> </p>
+<p>关于正负pair效果相同没有影响，这个问题其实很简单，可以这样理解：考虑pair&lt; xi,xj&gt;，约束条件(yi-yj)*w*(xi-xj) &gt;= 1</p>
+<ol>
+<li>正例xi &gt; xj, yi-yj==1. –&gt; 1*w*(xi-xj) &gt;= 1</li>
+<li>负例xi &lt; xj, yi-yj==-1. –&gt; <font color='blue'> -1*w*(xi-xj) &gt;= 1 等价于 1*w*(xj-xi) &gt;=1，这就相当于把负例反转变为正例(SVM样本没有Ranking SVM这种对称性，由于bias b)</font>，所以整个训练过程中全部使用正例(负例反转为正例)，全部使用负例，正负混合都是等价的。</li>
+</ol>
+<p>使用obj=hinge loss + regularization同理可证。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/机器学习/">机器学习</a><a href="/tags/TREC/">TREC</a><a href="/tags/Ranking-SVM/">Ranking SVM</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://nanjunxiao.github.io/2015/08/22/Session-Track-at-TREC-2012%E5%9B%9E%E9%A1%BE/" data-title="Session Track at TREC 2012回顾 | Nanjunxiao" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/09/29/常用机器学习算法的推导与被推倒/" title="常用机器学习算法的推导与被推倒">
+  <strong>上一篇：</strong><br/>
+  <span>
+  常用机器学习算法的推导与被推倒</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/08/21/一种轻量的消息分析系统架构/"  title="一种轻量的消息分析系统架构">
+ <strong>下一篇：</strong><br/> 
+ <span>一种轻量的消息分析系统架构
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#数据"><span class="toc-number">1.</span> <span class="toc-text">数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#我们的做法"><span class="toc-number">2.</span> <span class="toc-text">我们的做法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结果"><span class="toc-number">3.</span> <span class="toc-text">结果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ranking-SVM"><span class="toc-number">4.</span> <span class="toc-text">Ranking SVM</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/机器学习/NLP/" title="NLP">NLP<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/project/" title="project">project<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/机器学习/推荐/" title="推荐">推荐<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/机器学习/" title="机器学习">机器学习<sup>14</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kaggle/" title="kaggle">kaggle<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NLP/" title="NLP">NLP<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/LDA/" title="LDA">LDA<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GBRT/" title="GBRT">GBRT<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/xgboost/" title="xgboost">xgboost<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/强化学习/" title="强化学习">强化学习<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Actor-Critic/" title="Actor-Critic">Actor-Critic<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TREC/" title="TREC">TREC<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ranking-SVM/" title="Ranking SVM">Ranking SVM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TensorFlow/" title="TensorFlow">TensorFlow<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Gibbs-Sampling/" title="Gibbs Sampling">Gibbs Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/architecture/" title="architecture">architecture<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SVM/" title="SVM">SVM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/LR/" title="LR">LR<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BP/" title="BP">BP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NB/" title="NB">NB<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/EM/" title="EM">EM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GMM/" title="GMM">GMM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HMM/" title="HMM">HMM<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.52ml.net" target="_blank" title="我爱机器学习">我爱机器学习</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.52nlp.cn/" target="_blank" title="我爱自然语言处理">我爱自然语言处理</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://cos.name/" target="_blank" title="统计之都">统计之都</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.flickering.cn/" target="_blank" title="腾讯广点通">腾讯广点通</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.searchtb.com/?spm=0.0.0.0.9jn6ZC" target="_blank" title="搜索技术博客－淘宝">搜索技术博客－淘宝</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://stblog.baidu-tech.com/" target="_blank" title="百度搜索研发部官方博客">百度搜索研发部官方博客</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://tech.meituan.com/" target="_blank" title="美团技术博客">美团技术博客</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/itplus?viewmode=contents" target="_blank" title="peghoty机器学习">peghoty机器学习</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://coolshell.cn/" target="_blank" title="陈皓">陈皓</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/solstice/" target="_blank" title="陈硕">陈硕</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://mindhacks.cn/" target="_blank" title="刘未鹏">刘未鹏</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 此生多勉强 此身越重洋 <br/>
+			轻描时光漫长低唱语焉不详</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/nanjunxiao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/Junxiao Nan" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		<a href="http://www.zhihu.com/people/louis-90" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+		<a href="mailto:nanjunxiao@163.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+	
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="nanjunxiao">nanjunxiao</a>
+		
+		
+		</p>
+		<!--add counter by nanjunxiao, 2015-08-14-->
+		<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+		</script>
+		<span id="busuanzi_container_site_pv">
+			总访问量<span id="busuanzi_value_site_pv"></span>次
+		</span>
+		<br>
+		<span id="busuanzi_container_page_pv">
+			总阅读量<span id="busuanzi_value_page_pv"></span>次
+		</span>
+		<!--add counter by nanjunxiao, 2015-08-14-->
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

@@ -1,0 +1,651 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>搜索引擎结果自动化抽取通用算法 | Nanjunxiao</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="nanjunxiao">
+    
+
+    
+    <meta name="description" content="回顾了下2011年开发的元搜索自动抽取组件，当时的定位是全自动通用。算法适用于所有搜索引擎和新加的微博检索，或者说类似结构的网页，因为业务比较专一吧，效果还是不错的，准确率召回率均超过95%。大概总结下:-) 代码请移步到我的github    https:&#x2F;&#x2F;github.com&#x2F;nanjunxiao&#x2F;Arise 算法介绍 如上图大致是一个检索结果页面的DOM树结构，算法大致流程如下：  找到所">
+<meta property="og:type" content="article">
+<meta property="og:title" content="搜索引擎结果自动化抽取通用算法">
+<meta property="og:url" content="http://nanjunxiao.github.io/2015/08/01/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E7%BB%93%E6%9E%9C%E8%87%AA%E5%8A%A8%E5%8C%96%E6%8A%BD%E5%8F%96%E9%80%9A%E7%94%A8%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:site_name" content="Nanjunxiao">
+<meta property="og:description" content="回顾了下2011年开发的元搜索自动抽取组件，当时的定位是全自动通用。算法适用于所有搜索引擎和新加的微博检索，或者说类似结构的网页，因为业务比较专一吧，效果还是不错的，准确率召回率均超过95%。大概总结下:-) 代码请移步到我的github    https:&#x2F;&#x2F;github.com&#x2F;nanjunxiao&#x2F;Arise 算法介绍 如上图大致是一个检索结果页面的DOM树结构，算法大致流程如下：  找到所">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/Arise.png">
+<meta property="article:published_time" content="2015-08-01T06:40:02.000Z">
+<meta property="article:modified_time" content="2020-01-26T08:17:15.095Z">
+<meta property="article:author" content="nanjunxiao">
+<meta property="article:tag" content="抽取">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://nanjunxiao.github.io/img/Arise.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Nanjunxiao" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/%02.css">
+<link rel="stylesheet" href="/.css">
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/author.jpg" alt="Nanjunxiao" title="Nanjunxiao"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Nanjunxiao">Nanjunxiao</a></h1>
+				<h2 class="blog-motto">ML+OR真香</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:nanjunxiao.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/08/01/搜索引擎结果自动化抽取通用算法/" title="搜索引擎结果自动化抽取通用算法" itemprop="url">搜索引擎结果自动化抽取通用算法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="nanjunxiao" target="_blank" itemprop="author">nanjunxiao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-08-01T06:40:02.000Z" itemprop="datePublished"> 发表于 2015-08-01</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#算法介绍"><span class="toc-number">1.</span> <span class="toc-text">算法介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#性能指标"><span class="toc-number">2.</span> <span class="toc-text">性能指标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">3.</span> <span class="toc-text">后记</span></a></li></ol>
+		
+		</div>
+		
+		<p>回顾了下2011年开发的元搜索自动抽取组件，当时的定位是<strong>全自动通用</strong>。算法适用于所有搜索引擎和新加的微博检索，或者说类似结构的网页，因为业务比较专一吧，效果还是不错的，准确率召回率均超过95%。大概总结下:-)</p>
+<p><a href="https://github.com/nanjunxiao/Arise" target="_blank" rel="noopener">代码请移步到我的github</a>    <a href="https://github.com/nanjunxiao/Arise" target="_blank" rel="noopener">https://github.com/nanjunxiao/Arise</a></p>
+<h2 id="算法介绍"><a href="#算法介绍" class="headerlink" title="算法介绍"></a>算法介绍</h2><p><img src="../../../../img/Arise.png" alt=""></p>
+<p>如上图大致是一个检索结果页面的DOM树结构，算法大致流程如下：</p>
+<ol>
+<li><p>找到所有锚文本链接</p>
+</li>
+<li><p>进行分组（Xpath相同的锚文本链接）</p>
+</li>
+<li><p>求出每组的最小父块(最小父节点子树)，找出字符数超过body子树字符总数一半的最小父块，这时可能有多个最小父块，找子树最小的（即Xpath路径最长的），即html-…-div-…-div。这之后可能还有多个相同的最小父块，这时的最小父块就为<font color='red'>数据区域块</font>，如图阴影区域。需要记录下最小父块为数据区域块的链接组和其在链接组中的位置的对应关系。</p>
+</li>
+<li><p>对最小父块是数据区域块的链接组求出平均锚文本链接长度（文本链接比），最长的即为记录锚文本链接，比如绿色文本链接比大，绿色的就为记录锚文本链接</p>
+</li>
+<li><p>求记录锚文本链接相对<font color='red'>数据区域块</font>的最大父节点，即数据区域的第一层孩子节点，作为<font color='green'>数据记录块</font>。</p>
+</li>
+<li><p>找到<font color='green'>数据记录块</font>后，此处利用第一个和最后一个传统数据记录进行扩展，可以识别出其中的新型数据记录。</p>
+<p>（想用标签名、class属性识别新型数据记录，很难对所有搜索引擎都适用，从而做成通用的）</p>
+</li>
+<li><p>数据记录块生成子树，抽取所需元信息 </p>
+</li>
+</ol>
+<p>这里强调下3/4的顺序，由于右侧广告推广的文本链接比可能也很大，通过3可以去掉右侧广告噪音的影响。</p>
+<h2 id="性能指标"><a href="#性能指标" class="headerlink" title="性能指标"></a>性能指标</h2><ol>
+<li><p>准确率/召回率都超过95%</p>
+</li>
+<li><p>平均处理速度10ms/page</p>
+</li>
+</ol>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>由于当时的定位是<strong>全自动通用</strong>,所以本算法采用了启发式规则。</p>
+<p>如果现在重做，我可能会直接使用类似scrapy的xpath配置文件，毕竟短平快；或者复杂点利用记录的父/子/左右兄弟节点位置/标签/字数等属性构造特征，直接二分类来搞。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/project/">project</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/抽取/">抽取</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://nanjunxiao.github.io/2015/08/01/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E7%BB%93%E6%9E%9C%E8%87%AA%E5%8A%A8%E5%8C%96%E6%8A%BD%E5%8F%96%E9%80%9A%E7%94%A8%E7%AE%97%E6%B3%95/" data-title="搜索引擎结果自动化抽取通用算法 | Nanjunxiao" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/08/03/无约束优化算法总结/" title="无约束优化算法总结">
+  <strong>上一篇：</strong><br/>
+  <span>
+  无约束优化算法总结</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/07/31/Kaggle实战二/"  title="Kaggle实战(二)">
+ <strong>下一篇：</strong><br/> 
+ <span>Kaggle实战(二)
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#算法介绍"><span class="toc-number">1.</span> <span class="toc-text">算法介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#性能指标"><span class="toc-number">2.</span> <span class="toc-text">性能指标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">3.</span> <span class="toc-text">后记</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/机器学习/NLP/" title="NLP">NLP<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/project/" title="project">project<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/机器学习/推荐/" title="推荐">推荐<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/机器学习/" title="机器学习">机器学习<sup>14</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kaggle/" title="kaggle">kaggle<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NLP/" title="NLP">NLP<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/LDA/" title="LDA">LDA<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GBRT/" title="GBRT">GBRT<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/xgboost/" title="xgboost">xgboost<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/强化学习/" title="强化学习">强化学习<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Actor-Critic/" title="Actor-Critic">Actor-Critic<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TREC/" title="TREC">TREC<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ranking-SVM/" title="Ranking SVM">Ranking SVM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TensorFlow/" title="TensorFlow">TensorFlow<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Gibbs-Sampling/" title="Gibbs Sampling">Gibbs Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/architecture/" title="architecture">architecture<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SVM/" title="SVM">SVM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/LR/" title="LR">LR<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BP/" title="BP">BP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NB/" title="NB">NB<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/EM/" title="EM">EM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GMM/" title="GMM">GMM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HMM/" title="HMM">HMM<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.52ml.net" target="_blank" title="我爱机器学习">我爱机器学习</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.52nlp.cn/" target="_blank" title="我爱自然语言处理">我爱自然语言处理</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://cos.name/" target="_blank" title="统计之都">统计之都</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.flickering.cn/" target="_blank" title="腾讯广点通">腾讯广点通</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.searchtb.com/?spm=0.0.0.0.9jn6ZC" target="_blank" title="搜索技术博客－淘宝">搜索技术博客－淘宝</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://stblog.baidu-tech.com/" target="_blank" title="百度搜索研发部官方博客">百度搜索研发部官方博客</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://tech.meituan.com/" target="_blank" title="美团技术博客">美团技术博客</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/itplus?viewmode=contents" target="_blank" title="peghoty机器学习">peghoty机器学习</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://coolshell.cn/" target="_blank" title="陈皓">陈皓</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/solstice/" target="_blank" title="陈硕">陈硕</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://mindhacks.cn/" target="_blank" title="刘未鹏">刘未鹏</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 此生多勉强 此身越重洋 <br/>
+			轻描时光漫长低唱语焉不详</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/nanjunxiao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/Junxiao Nan" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		<a href="http://www.zhihu.com/people/louis-90" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+		<a href="mailto:nanjunxiao@163.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+	
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="nanjunxiao">nanjunxiao</a>
+		
+		
+		</p>
+		<!--add counter by nanjunxiao, 2015-08-14-->
+		<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+		</script>
+		<span id="busuanzi_container_site_pv">
+			总访问量<span id="busuanzi_value_site_pv"></span>次
+		</span>
+		<br>
+		<span id="busuanzi_container_page_pv">
+			总阅读量<span id="busuanzi_value_page_pv"></span>次
+		</span>
+		<!--add counter by nanjunxiao, 2015-08-14-->
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

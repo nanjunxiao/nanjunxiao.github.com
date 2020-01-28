@@ -1,0 +1,667 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Kaggle实战(一) | Nanjunxiao</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="nanjunxiao">
+    
+
+    
+    <meta name="description" content="第一次接触kaggle比赛，是在听完台大林轩田老师的机器学习基石和技法课程之后。都说实践出真知，为了系统的巩固下机器学习实战技能，成为一名合格的数据挖掘工程师，我踏入了kaggle大门。 参加比赛很耗费时间和精力，由于本人已经工作，只能利用业余时间有选择的参加，希望能从中学到东西。我选择的比赛都是有监督的学习（当然用到了非监督方法，比如Bag of Words Meets Bags of Popc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kaggle实战(一)">
+<meta property="og:url" content="http://nanjunxiao.github.io/2015/07/30/Kaggle%E5%AE%9E%E6%88%98%E4%B8%80/index.html">
+<meta property="og:site_name" content="Nanjunxiao">
+<meta property="og:description" content="第一次接触kaggle比赛，是在听完台大林轩田老师的机器学习基石和技法课程之后。都说实践出真知，为了系统的巩固下机器学习实战技能，成为一名合格的数据挖掘工程师，我踏入了kaggle大门。 参加比赛很耗费时间和精力，由于本人已经工作，只能利用业余时间有选择的参加，希望能从中学到东西。我选择的比赛都是有监督的学习（当然用到了非监督方法，比如Bag of Words Meets Bags of Popc">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/Titanic.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/mykaggle.png">
+<meta property="article:published_time" content="2015-07-30T15:45:25.000Z">
+<meta property="article:modified_time" content="2020-01-26T08:17:15.090Z">
+<meta property="article:author" content="nanjunxiao">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="kaggle">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://nanjunxiao.github.io/img/Titanic.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Nanjunxiao" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/%02.css">
+<link rel="stylesheet" href="/.css">
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/author.jpg" alt="Nanjunxiao" title="Nanjunxiao"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Nanjunxiao">Nanjunxiao</a></h1>
+				<h2 class="blog-motto">ML+OR真香</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:nanjunxiao.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/07/30/Kaggle实战一/" title="Kaggle实战(一)" itemprop="url">Kaggle实战(一)</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="nanjunxiao" target="_blank" itemprop="author">nanjunxiao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-07-30T15:45:25.000Z" itemprop="datePublished"> 发表于 2015-07-30</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#工欲善其事，必先利其器"><span class="toc-number">1.</span> <span class="toc-text">工欲善其事，必先利其器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#机器学习流程"><span class="toc-number">2.</span> <span class="toc-text">机器学习流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#比赛实战"><span class="toc-number">3.</span> <span class="toc-text">比赛实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Bike-Sharing-Demand"><span class="toc-number">3.1.</span> <span class="toc-text">1. Bike Sharing Demand</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Bag-of-Words-Meets-Bags-of-Popcorn"><span class="toc-number">3.2.</span> <span class="toc-text">2. Bag of Words Meets Bags of Popcorn</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Titanic-Machine-Learning-from-Disaster"><span class="toc-number">3.3.</span> <span class="toc-text">3. Titanic: Machine Learning from Disaster</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-San-Francisco-Crime-Classification"><span class="toc-number">3.4.</span> <span class="toc-text">4. San Francisco Crime Classification</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-Caterpillar-Tube-Pricing"><span class="toc-number">3.5.</span> <span class="toc-text">5. Caterpillar Tube Pricing</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Join-Kaggle"><span class="toc-number">4.</span> <span class="toc-text">Join Kaggle</span></a></li></ol>
+		
+		</div>
+		
+		<p>第一次接触kaggle比赛，是在听完台大林轩田老师的机器学习基石和技法课程之后。都说实践出真知，为了系统的巩固下机器学习实战技能，成为一名合格的数据挖掘工程师，我踏入了kaggle大门。</p>
+<p>参加比赛很耗费时间和精力，由于本人已经工作，只能利用业余时间有选择的参加，希望能从中学到东西。我选择的比赛都是有监督的学习（当然用到了非监督方法，比如Bag of Words Meets Bags of Popcorn就用到了Collapsed Gibbs LDA），概括起来就是分类/排序/回归。下面就跟大家分享下近两个月我参加的比赛，欢迎一起探讨。</p>
+<h2 id="工欲善其事，必先利其器"><a href="#工欲善其事，必先利其器" class="headerlink" title="工欲善其事，必先利其器"></a>工欲善其事，必先利其器</h2><p>首先介绍下我经常使用的机器学习工具:</p>
+<ol>
+<li><strong>scikit-learn</strong>. 涵盖了基本能想到的各种机器学习算法，由于本人python党，我把它当作matlab和R的替代品。</li>
+<li><strong>xgboost</strong>. 华盛顿大学机器学习大牛陈天奇出品的GBRT框架，果然是刷比赛利器。</li>
+<li><strong>liblinear/libsvm</strong>. 台大林智仁团队的佳作，工业界很多也在用。</li>
+<li><strong>pandas</strong>. 处理数据python包，DataFrame那叫一个好用。</li>
+</ol>
+<h2 id="机器学习流程"><a href="#机器学习流程" class="headerlink" title="机器学习流程"></a>机器学习流程</h2><p>拿到一个比赛，我的一般套路是：</p>
+<ol>
+<li><strong>读懂比赛介绍，明确是哪类问题</strong>:分类/排序/回归。</li>
+<li><strong>数据特征处理</strong>。这个是最耗时也是最重要的，正所谓“<strong><em>数据和特征决定了效果上限，模型和算法决定了逼近这个上限的程度</em></strong>”。其实这点我还有很大欠缺，汗！</li>
+<li><strong>Cross validation数据集切分</strong>。数据集很大完全可以hold out一份作为测试集（<em>不是待提交结果的测试集，此处是用来CV的</em>），数据集偏小就需要K-fold或者Leave-one-out了，如果训练集有时序关系，还要注意测试集选取最后时间片的。这点我自我批评，有时为了省事，直接就提交结果做CV了。咳咳，这有点像imagenet比赛作弊了，只是我没用小号增加提交次数。</li>
+<li><strong>常用算法/默认参数跑结果作为baseline</strong>。这个需要一些经验和直觉，一般来说Tree Based的Random Forest和GBRT效果都不会太烂，如果特征维度很大很稀疏这时就需要试试线性SVM和LR了。</li>
+<li><strong>接下来就是调参了</strong>，这个我也没用太多经验，一般就是GridSearchCV或者RandomizedSearchCV。有人推荐Hyperopt库，接下来调研下。</li>
+<li><strong>迭代</strong>。为了取得比较好的结果，下面就是2/3/4/5不断迭代了。</li>
+<li><strong>Blending</strong>.上面说的都是单模型，最后让你结果更general/low variance，提升一个档次的就是结果ensemble了（<em>不是指gbrt/rf的ensemble，是多种模型的融合</em>）。这里我一般就是简单的多种模型结果的averaging（weighted）or voting，这里推荐一篇ensemble selection  paper(<a href="http://www.cs.cornell.edu/~alexn/papers/shotgun.icml04.revised.rev2.pdf)。" target="_blank" rel="noopener">http://www.cs.cornell.edu/~alexn/papers/shotgun.icml04.revised.rev2.pdf)。</a></li>
+</ol>
+<h2 id="比赛实战"><a href="#比赛实战" class="headerlink" title="比赛实战"></a>比赛实战</h2><h3 id="1-Bike-Sharing-Demand"><a href="#1-Bike-Sharing-Demand" class="headerlink" title="1. Bike Sharing Demand"></a>1. Bike Sharing Demand</h3><p>Forecast use of a city bikeshare system. <a href="https://www.kaggle.com/c/bike-sharing-demand" target="_blank" rel="noopener">https://www.kaggle.com/c/bike-sharing-demand</a></p>
+<p>这是一个回归问题，最后预测租车数量。这里需要注意一点，最后总数实际等于casual+registered。原始共10个特征，包括datetime特征，season/holiday等类别特征，temp/atemp等数值特征，没有特征缺失值。评价指标为RMSLE，其实就是RMSE原来的p和a加1取ln。</p>
+<p>当时正在研究GBRT，所以使用了xgboost。由于使用RMSLE，xgboost自带的loss是square loss，eval_metric是RMSE，这时两种选择1.修改xgboost代码，派生新的优化objective，求新objective的gradient（一阶导）/hessian（二阶导），派生新的eval_metric；2.训练数据的y做ln(y+1)转化，最后预测时再做exp(y^)-1就转回来了。当然2简单了，我也是这么实施的。</p>
+<p>关于数据特征处理，datetime转成y/m/d/h/dayofweek，y/m等类别特征由于有连续性，这里没有做one-hot编码。经过cv最后cut掉了日/season。</p>
+<p>Xgboost参数其实没有怎么去调，shrinkage=0.1，tree_num=1000，depth=6，其他默认。</p>
+<p>效果三次提升拐点分别是：1.RMSE转换为RMLSE(<em>square loss转为square log loss</em>)，说明预测值的范围很大，log转化后bound更tight了；2.cut了日/season特征；3.转换为对casual和registered的分别回归问题，在加和。最后RMLSE结果为<strong>0.36512</strong>，public LB最好为30位，最终private LB为<strong>28</strong>，还好说明没有overfit。<br>![](../../../../img/Bike Sharing Demand.png) </p>
+<h3 id="2-Bag-of-Words-Meets-Bags-of-Popcorn"><a href="#2-Bag-of-Words-Meets-Bags-of-Popcorn" class="headerlink" title="2. Bag of Words Meets Bags of Popcorn"></a>2. Bag of Words Meets Bags of Popcorn</h3><p>Use Google’s Word2Vec for movie reviews. <a href="https://www.kaggle.com/c/word2vec-nlp-tutorial" target="_blank" rel="noopener">https://www.kaggle.com/c/word2vec-nlp-tutorial</a></p>
+<p>这是一个文本情感二分类问题。25000的labeled训练样本，只有一个raw text 特征”review“。评价指标为AUC，所以这里提交结果<strong>需要用概率</strong>，我开始就掉坑里了，结果一直上不来。</p>
+<p>比赛里有教程如何使用word2vec进行二分类，可以作为入门学习材料。我没有使用word embeddinng，直接采用BOW及ngram作为特征训练，效果还凑合，后面其实可以融合embedding特征试试。对于raw text我采用TfidfVectorizer(stop_words=’english’, ngram_range=(1,3), sublinear_tf=True, min_df=2)，并采用卡方检验进行特征选择，经过CV，最终确定特征数为200000。</p>
+<p>单模型我选取了GBRT/NB/LR/linear SVC。GBRT一般对于维度较大比较稀疏效果不是很好，但对于该数据表现不是很差。NB采用MultinomialNB效果也没有想象的那么惊艳。几个模型按效果排序为linear SVC(0.95601)&gt;LR(0.94823)&gt;GBRT(0.94173)&gt;NB(0.93693)，看来线性SVM在文本上还是很强悍的。</p>
+<p>后续我又采用LDA生成主题特征，本来抱着很大期望，现实还是那么骨感，采用上述单模型AUC最好也只有0.93024。既然单独使用主题特征没有提高，那和BOW融合呢？果然work了!后面试验证实特征融合还是linear SVC效果最好，LDA主题定为500，而且不去除停用词效果更好，AUC为<strong>0.95998</strong>。</p>
+<p>既然没有时间搞单模型了，还有最后一招，多模型融合。这里有一个原则就是模型尽量多样，不一定要求指标最好。最终我选取5组不是很差的多模型结果进行average stacking，AUC为<strong>0.96115</strong>，<strong>63</strong>位。最终private LB跌倒了<strong>71st</strong>，应该融合word enbedding试试，没时间细搞了。<br>![](../../../../img/Bag of Words Meets Bags of Popcorn.png) </p>
+<h3 id="3-Titanic-Machine-Learning-from-Disaster"><a href="#3-Titanic-Machine-Learning-from-Disaster" class="headerlink" title="3. Titanic: Machine Learning from Disaster"></a>3. Titanic: Machine Learning from Disaster</h3><p>Predict survival on the Titanic. <a href="https://www.kaggle.com/c/titanic" target="_blank" rel="noopener">https://www.kaggle.com/c/titanic</a></p>
+<p>硬二分类问题，不需要预测概率，给出0/1即可，评价指标为accuracy。说句题外话，网上貌似有遇难者名单，LB上好几个score 1.0的。有坊间说，score超过90%就怀疑作弊了，不知真假，不过top300绝大多数都集中在0.808-0.818。这个题目我后面没有太多的改进想法了，求指导啊~</p>
+<p>数据包括数值和类别特征，并存在缺失值。类别特征这里我做了one-hot-encode，缺失值是采用均值/中位数/众数需要根据数据来定，我的做法是根据pandas打印出列数据分布来定。</p>
+<p>模型我采用了DT/RF/GBDT/SVC，由于xgboost输出是概率，需要指定阈值确定0/1，可能我指定不恰当，效果不好<strong>0.78847</strong>。效果最好的是RF，<strong>0.81340</strong>。这里经过筛选我使用的特征包括’Pclass’,’Gender’, ‘Cabin’,’Ticket’,’Embarked’,’Title’进行onehot编码，’Age’,’SibSp’,’Parch’,’Fare’,’class_age’,’Family’ 归一化。我也尝试进行构建一些新特征和特征组合，比如title分割为Mr/Mrs/Miss/Master四类或者split提取第一个词，添加fare_per_person等，pipeline中也加入feature selection，但是效果都没有提高，求指导~<br><img src="../../../../img/Titanic.png" alt=""></p>
+<h3 id="4-San-Francisco-Crime-Classification"><a href="#4-San-Francisco-Crime-Classification" class="headerlink" title="4. San Francisco Crime Classification"></a>4. San Francisco Crime Classification</h3><p>Predict the category of crimes that occurred in the city by the bay. <a href="https://www.kaggle.com/c/sf-crime" target="_blank" rel="noopener">https://www.kaggle.com/c/sf-crime</a></p>
+<p>这是一个多分类问题，一般三种处理方法：<strong>one vs all, one vs one, softmax</strong>，信息损失逐渐递减。87809条训练数据，数据包括datetime/类别/数值特征，没有缺失值，label共39种。评价指标为logloss，这里要说下和AUC的区别，<strong>AUC更强调相对排序</strong>。</p>
+<p>我抽取后特征包括year,m,d,h,m,dow,district,address,x,y，模型选择softmax objective的LR和xgboost。这两个模型对特征挑食，有不同的偏好，LR喜好0/1类别或者locale到0-1的数值特征，而xgboost更喜好原始的数值特征，而且对缺失值也能很好的处理。所以对于LR就是2个归一化的数值特征和8个待one-hot编码的特征，对于xgboost是8个原始数值特征（包括year/m/d等，具有连续性）和2个待one-hot编码的特征。</p>
+<p>LR效果要略好于xgboost效果，logloss分别为<strong>2.28728/2.28869</strong>，最好位置为<strong>3rd</strong>，目前跌到<strong>4th</strong>，后面找时间再搞一搞。<br>![](../../../../img/San Francisco Crime Classification.png)</p>
+<h3 id="5-Caterpillar-Tube-Pricing"><a href="#5-Caterpillar-Tube-Pricing" class="headerlink" title="5. Caterpillar Tube Pricing"></a>5. Caterpillar Tube Pricing</h3><p>Model quoted prices for industrial tube assemblies. <a href="https://www.kaggle.com/c/caterpillar-tube-pricing" target="_blank" rel="noopener">https://www.kaggle.com/c/caterpillar-tube-pricing</a></p>
+<p>这也是一个回归问题，预测tube报价。30213条训练样本，特征分散在N个文件中，需要你left join起来。评价指标为RMLSE，哈哈，是不是很熟悉？对，跟bike sharing的一样，所以怎么转换知道了吧？看，做多了套路trick也就了然了。感觉这个需要领域知识，但其实有些特征我是不知道含义的，anyway，先merge所有特征不加domain特征直接搞起。</p>
+<p>这是我见过小样本里特征处理最麻烦的(<em>后面的CTR大数据处理更耗时</em>)，它特征分散在多个文件中，还好我们有神器pandas，直接<strong>left join</strong>搞定。这里有些trick需要注意，比如comp_*文件要用append不能join，这样正好是一个全集，否则就会多个weight特征了。特征存在缺失值，这里我全部采用0值，不知是否恰当？</p>
+<p>模型我主要试了RF和xgboost，RF tree_num=1000，其他默认值，RMLSE=0.255201，主要精力放在了xgboost上，调了几次参数(<em>depth=58,col_sample=0.75,sample=0.85,shrinkage=0.01,tree_num=2000</em>)，最好<strong>RMLSE=0.231220</strong>，最好位置<strong>120th</strong>，目前跌倒<strong>206th</strong>了，看来需要好好搞搞特征了！<br>![](../../../../img/Caterpillar Tube Pricing.png) </p>
+<h2 id="Join-Kaggle"><a href="#Join-Kaggle" class="headerlink" title="Join Kaggle"></a>Join Kaggle</h2><p>你看我搞的还凑合吧，so，快来加入kaggle吧，求组队:-)<br><img src="../../../../img/mykaggle.png" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/机器学习/">机器学习</a><a href="/tags/kaggle/">kaggle</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://nanjunxiao.github.io/2015/07/30/Kaggle%E5%AE%9E%E6%88%98%E4%B8%80/" data-title="Kaggle实战(一) | Nanjunxiao" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/07/31/Kaggle实战二/" title="Kaggle实战(二)">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Kaggle实战(二)</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/07/29/hello-world/"  title="Hello World">
+ <strong>下一篇：</strong><br/> 
+ <span>Hello World
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#工欲善其事，必先利其器"><span class="toc-number">1.</span> <span class="toc-text">工欲善其事，必先利其器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#机器学习流程"><span class="toc-number">2.</span> <span class="toc-text">机器学习流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#比赛实战"><span class="toc-number">3.</span> <span class="toc-text">比赛实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Bike-Sharing-Demand"><span class="toc-number">3.1.</span> <span class="toc-text">1. Bike Sharing Demand</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Bag-of-Words-Meets-Bags-of-Popcorn"><span class="toc-number">3.2.</span> <span class="toc-text">2. Bag of Words Meets Bags of Popcorn</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Titanic-Machine-Learning-from-Disaster"><span class="toc-number">3.3.</span> <span class="toc-text">3. Titanic: Machine Learning from Disaster</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-San-Francisco-Crime-Classification"><span class="toc-number">3.4.</span> <span class="toc-text">4. San Francisco Crime Classification</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-Caterpillar-Tube-Pricing"><span class="toc-number">3.5.</span> <span class="toc-text">5. Caterpillar Tube Pricing</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Join-Kaggle"><span class="toc-number">4.</span> <span class="toc-text">Join Kaggle</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/机器学习/NLP/" title="NLP">NLP<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/project/" title="project">project<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/机器学习/推荐/" title="推荐">推荐<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/机器学习/" title="机器学习">机器学习<sup>14</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kaggle/" title="kaggle">kaggle<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NLP/" title="NLP">NLP<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/LDA/" title="LDA">LDA<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GBRT/" title="GBRT">GBRT<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/xgboost/" title="xgboost">xgboost<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/强化学习/" title="强化学习">强化学习<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Actor-Critic/" title="Actor-Critic">Actor-Critic<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TREC/" title="TREC">TREC<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ranking-SVM/" title="Ranking SVM">Ranking SVM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TensorFlow/" title="TensorFlow">TensorFlow<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Gibbs-Sampling/" title="Gibbs Sampling">Gibbs Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/architecture/" title="architecture">architecture<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SVM/" title="SVM">SVM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/LR/" title="LR">LR<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BP/" title="BP">BP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NB/" title="NB">NB<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/EM/" title="EM">EM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GMM/" title="GMM">GMM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HMM/" title="HMM">HMM<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.52ml.net" target="_blank" title="我爱机器学习">我爱机器学习</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.52nlp.cn/" target="_blank" title="我爱自然语言处理">我爱自然语言处理</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://cos.name/" target="_blank" title="统计之都">统计之都</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.flickering.cn/" target="_blank" title="腾讯广点通">腾讯广点通</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.searchtb.com/?spm=0.0.0.0.9jn6ZC" target="_blank" title="搜索技术博客－淘宝">搜索技术博客－淘宝</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://stblog.baidu-tech.com/" target="_blank" title="百度搜索研发部官方博客">百度搜索研发部官方博客</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://tech.meituan.com/" target="_blank" title="美团技术博客">美团技术博客</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/itplus?viewmode=contents" target="_blank" title="peghoty机器学习">peghoty机器学习</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://coolshell.cn/" target="_blank" title="陈皓">陈皓</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/solstice/" target="_blank" title="陈硕">陈硕</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://mindhacks.cn/" target="_blank" title="刘未鹏">刘未鹏</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 此生多勉强 此身越重洋 <br/>
+			轻描时光漫长低唱语焉不详</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/nanjunxiao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/Junxiao Nan" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		<a href="http://www.zhihu.com/people/louis-90" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+		<a href="mailto:nanjunxiao@163.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+	
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="nanjunxiao">nanjunxiao</a>
+		
+		
+		</p>
+		<!--add counter by nanjunxiao, 2015-08-14-->
+		<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+		</script>
+		<span id="busuanzi_container_site_pv">
+			总访问量<span id="busuanzi_value_site_pv"></span>次
+		</span>
+		<br>
+		<span id="busuanzi_container_page_pv">
+			总阅读量<span id="busuanzi_value_page_pv"></span>次
+		</span>
+		<!--add counter by nanjunxiao, 2015-08-14-->
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

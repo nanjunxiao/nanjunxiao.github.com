@@ -1,0 +1,648 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>百科词条编辑推荐方法总结 | Nanjunxiao</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="nanjunxiao">
+    
+
+    
+    <meta name="description" content="百科有很多新添加和待完善词条，需要将这些词条推送给有能力有意愿的用户进行编辑完善。这是个推荐问题，这里我大致说下我想到的方法，欢迎吐槽探讨~ 数据准备　　1. 640万词条内容清洗&#x2F;抽取&#x2F;分词 　　2. Session日志中筛选600万高质量用户，基于编辑浏览词条BOW构建用户profile 　　3. 构建各种词典：比如User-&gt;list&lt; Item&gt;，Item-&gt;l">
+<meta property="og:type" content="article">
+<meta property="og:title" content="百科词条编辑推荐方法总结">
+<meta property="og:url" content="http://nanjunxiao.github.io/2015/08/13/%E7%99%BE%E7%A7%91%E8%AF%8D%E6%9D%A1%E7%BC%96%E8%BE%91%E6%8E%A8%E8%8D%90%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Nanjunxiao">
+<meta property="og:description" content="百科有很多新添加和待完善词条，需要将这些词条推送给有能力有意愿的用户进行编辑完善。这是个推荐问题，这里我大致说下我想到的方法，欢迎吐槽探讨~ 数据准备　　1. 640万词条内容清洗&#x2F;抽取&#x2F;分词 　　2. Session日志中筛选600万高质量用户，基于编辑浏览词条BOW构建用户profile 　　3. 构建各种词典：比如User-&gt;list&lt; Item&gt;，Item-&gt;l">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/recommend/guanlianguanxi.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/recommend/ItemCF.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/recommend/UserCF.png">
+<meta property="article:published_time" content="2015-08-13T09:19:43.000Z">
+<meta property="article:modified_time" content="2020-01-26T08:17:15.100Z">
+<meta property="article:author" content="nanjunxiao">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="推荐">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://nanjunxiao.github.io/img/recommend/guanlianguanxi.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Nanjunxiao" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/%02.css">
+<link rel="stylesheet" href="/.css">
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/author.jpg" alt="Nanjunxiao" title="Nanjunxiao"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Nanjunxiao">Nanjunxiao</a></h1>
+				<h2 class="blog-motto">ML+OR真香</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:nanjunxiao.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/08/13/百科词条编辑推荐方法总结/" title="百科词条编辑推荐方法总结" itemprop="url">百科词条编辑推荐方法总结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="nanjunxiao" target="_blank" itemprop="author">nanjunxiao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-08-13T09:19:43.000Z" itemprop="datePublished"> 发表于 2015-08-13</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#数据准备"><span class="toc-number">1.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关联关系"><span class="toc-number">2.</span> <span class="toc-text">关联关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ItemCF"><span class="toc-number">3.</span> <span class="toc-text">ItemCF</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UserCF"><span class="toc-number">4.</span> <span class="toc-text">UserCF</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Content-based"><span class="toc-number">5.</span> <span class="toc-text">Content-based</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-number">6.</span> <span class="toc-text">小结</span></a></li></ol>
+		
+		</div>
+		
+		<p>　　百科有很多新添加和待完善词条，需要将这些词条推送给有能力有意愿的用户进行编辑完善。这是个推荐问题，这里我大致说下我想到的方法，欢迎吐槽探讨~</p>
+<h2 id="数据准备"><a href="#数据准备" class="headerlink" title="数据准备"></a>数据准备</h2><p>　　1. 640万词条内容清洗/抽取/分词</p>
+<p>　　2. Session日志中筛选600万高质量用户，基于编辑浏览词条BOW构建用户profile</p>
+<p>　　3. 构建各种词典：比如User-&gt;list&lt; Item&gt;，Item-&gt;list&lt; User&gt;等。</p>
+<p>　　4. 构建倒排：根据Item-&gt;list&lt; term&gt;，User-&gt;list&lt; term&gt;正排，构建倒排term-&gt;list&lt; Item&gt;，term-&gt;list&lt; User&gt;</p>
+<p>　　为了表示方便，下面User/Item/term（切词后的词）分别缩写为U/I/t.</p>
+<h2 id="关联关系"><a href="#关联关系" class="headerlink" title="关联关系"></a>关联关系</h2><p>　　该方法比较直接简单，词条I下面有同义词列表，利用同义词的历史编辑用户U，可以为I推荐编辑用户U。</p>
+<p>　　该方法示意图如下，最终得到的是I-&gt;list&lt; U&gt;结果，需要转置为U-&gt;list&lt; I&gt;供前端展示使用。<br>　　<img src="../../../../img/recommend/guanlianguanxi.png" alt=""></p>
+<p>　　该方法有局限性，当词条没有同义词或者很少时，召回会很低，一般把结果用来和其他方法结果进行融合后使用。</p>
+<h2 id="ItemCF"><a href="#ItemCF" class="headerlink" title="ItemCF"></a>ItemCF</h2><p>　　ItemCF首先找到词条A的相似词条B，然后将编辑过B的用户U作为结果推荐给A。</p>
+<p>　　这里强调下，由于<strong>词条有很丰富的文本信息</strong>，这里计算相似度并没有采用传统的<strong><em>利用用户的行为记录为向量</em></strong>的方式，而是直接利用文本的BOW计算cosine相似度。下面的UserCF同，采用user的profile计算相似度。</p>
+<p>　　该方法示意图如下，最终得到的是I-&gt;list&lt; U&gt;结果，需要转置为U-&gt;list&lt; I&gt;供前端展示使用。<br>　　<img src="../../../../img/recommend/ItemCF.png" alt=""></p>
+<p>　　这里需要计算Item[i][j]的相似度稀疏矩阵，首先拉取t-&gt;list&lt; I&gt;倒排，比如t-&gt;list&lt; I1,I2,I5&gt;，这时I1/I2/I5两两之间对应的Item[i][j]分别加1。当t-&gt;list&lt; I&gt;都处理完了，Item[i][j]表就打完了，这就是Item之间cosine相似度的分子部分–<strong>笛卡尔积</strong>。分母部分L1 Norm可以提前计算好，附在I-&gt;list&lt; t&gt;的最后。这样相比两两Item的list&lt; t&gt;直接计算cosine相似度，计算量大大降低了，原因在于很多Item之间根本没有term交集，根本没必要浪费时间在这些相似度为0的Item之间。</p>
+<p>　　当Item量不是很大时，上面方法可以单机完成，但当Item量很大时，尽管Item[][]是稀疏矩阵，单机也是存储不下的，这时就需要分治了。举例来说假如需要计算I1和其他Item的相似度，我们可以只存储原来稀疏矩阵的一行Item[]，通过I1-&gt;list&lt; t1,t2&gt;拉取t-&gt;list&lt; I&gt;倒排，</p>
+<p>　　假如t1-&gt;list&lt; I1,I2,I3&gt;，t2-&gt;list&lt; I1,I2,I5&gt;，可以得到I1和I2笛卡尔积为2，I1和I3/I1和I5笛卡尔积均为1，这样I1和其他Item的相似度向量Item[]就都求出来了。同样计算量相比O(N)也大大减少了。</p>
+<p>　　得到Item之间的相似度后，给词条A推荐最相似topK词条的历史编辑用户。用户u对词条i的兴趣为P(u,i)=sum( cosine(i,j) )，其中j为用户u编辑过的词条和topK相似词条的交集。</p>
+<h2 id="UserCF"><a href="#UserCF" class="headerlink" title="UserCF"></a>UserCF</h2><p>　　UserCF将用户A的相似用户B编辑过的词条I，作为结果推荐给A。</p>
+<p>　　该方法示意图如下，得到的就是U-&gt;list&lt; I&gt;最终结果，可以直接用来展示。<br>　　<img src="../../../../img/recommend/UserCF.png" alt=""></p>
+<p>　　由于User量很大，参照ItemCF存储User[][]稀疏矩阵是不可行的，直接采用分治来填充User[]向量。举例来说假如需要计算U1和其他User的相似度，通过U1-&gt;list&lt; t1,t2&gt;拉取t-&gt;list&lt; U&gt;倒排，假如t1-&gt;list&lt; U1,U2,U3&gt;，t2-&gt;list&lt; U1,U2,U5&gt;，可以得到U1和U2笛卡尔积为2，U1和U3/U1和U5笛卡尔积均为1，这样U1和其他User的相似度向量User[]就更新完了。同样计算量相比O(N)也大大减少了。</p>
+<p>　　得到User之间的相似度后，给用户A推荐最相似topK用户的历史编辑词条。用户u对词条i的兴趣为P(u,i)=sum( cosine(u,v) )，其中v为编辑过词条i的用户和topK相似用户的交集。</p>
+<p>　　UserCF相比ItemCF效果相差不大，但由于用户量大于词条量，用户相似度矩阵计算量大于词条相似度矩阵，所以采用ItemCF性能会好一些。</p>
+<h2 id="Content-based"><a href="#Content-based" class="headerlink" title="Content-based"></a>Content-based</h2><p>　　由于User和Item都有文本描述，所以可以直接计算用户和词条的内容相似度，选取topK词条进行推荐，输出就是U-&gt;list&lt; I&gt;最终结果。</p>
+<p>　　同样的可以利用t-&gt;list&lt; U&gt;，t-&gt;list&lt; I&gt;倒排计算有term交集的用户和词条相似度，减小计算量。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>　　上面只是大致思路，距真正页面展示还有很长一段路要优化。比如有的用户推荐词条多有的少，如何平均？不基于内容而是利用用户行为记录效果会怎样？推荐词条以何种方式展示对用户最友好？如何冷启动，直接random推送最需要完善的词条？</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>►<a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%8E%A8%E8%8D%90/">推荐</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/机器学习/">机器学习</a><a href="/tags/推荐/">推荐</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://nanjunxiao.github.io/2015/08/13/%E7%99%BE%E7%A7%91%E8%AF%8D%E6%9D%A1%E7%BC%96%E8%BE%91%E6%8E%A8%E8%8D%90%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/" data-title="百科词条编辑推荐方法总结 | Nanjunxiao" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/08/21/一种轻量的消息分析系统架构/" title="一种轻量的消息分析系统架构">
+  <strong>上一篇：</strong><br/>
+  <span>
+  一种轻量的消息分析系统架构</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/08/08/Topic-Model-LDA实战篇/"  title="Topic Model-LDA实战篇">
+ <strong>下一篇：</strong><br/> 
+ <span>Topic Model-LDA实战篇
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#数据准备"><span class="toc-number">1.</span> <span class="toc-text">数据准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关联关系"><span class="toc-number">2.</span> <span class="toc-text">关联关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ItemCF"><span class="toc-number">3.</span> <span class="toc-text">ItemCF</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UserCF"><span class="toc-number">4.</span> <span class="toc-text">UserCF</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Content-based"><span class="toc-number">5.</span> <span class="toc-text">Content-based</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-number">6.</span> <span class="toc-text">小结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/机器学习/NLP/" title="NLP">NLP<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/project/" title="project">project<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/机器学习/推荐/" title="推荐">推荐<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/机器学习/" title="机器学习">机器学习<sup>14</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kaggle/" title="kaggle">kaggle<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NLP/" title="NLP">NLP<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/LDA/" title="LDA">LDA<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GBRT/" title="GBRT">GBRT<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/xgboost/" title="xgboost">xgboost<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/强化学习/" title="强化学习">强化学习<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Actor-Critic/" title="Actor-Critic">Actor-Critic<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TREC/" title="TREC">TREC<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ranking-SVM/" title="Ranking SVM">Ranking SVM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TensorFlow/" title="TensorFlow">TensorFlow<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Gibbs-Sampling/" title="Gibbs Sampling">Gibbs Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/architecture/" title="architecture">architecture<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SVM/" title="SVM">SVM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/LR/" title="LR">LR<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BP/" title="BP">BP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NB/" title="NB">NB<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/EM/" title="EM">EM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GMM/" title="GMM">GMM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HMM/" title="HMM">HMM<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.52ml.net" target="_blank" title="我爱机器学习">我爱机器学习</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.52nlp.cn/" target="_blank" title="我爱自然语言处理">我爱自然语言处理</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://cos.name/" target="_blank" title="统计之都">统计之都</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.flickering.cn/" target="_blank" title="腾讯广点通">腾讯广点通</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.searchtb.com/?spm=0.0.0.0.9jn6ZC" target="_blank" title="搜索技术博客－淘宝">搜索技术博客－淘宝</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://stblog.baidu-tech.com/" target="_blank" title="百度搜索研发部官方博客">百度搜索研发部官方博客</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://tech.meituan.com/" target="_blank" title="美团技术博客">美团技术博客</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/itplus?viewmode=contents" target="_blank" title="peghoty机器学习">peghoty机器学习</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://coolshell.cn/" target="_blank" title="陈皓">陈皓</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/solstice/" target="_blank" title="陈硕">陈硕</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://mindhacks.cn/" target="_blank" title="刘未鹏">刘未鹏</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 此生多勉强 此身越重洋 <br/>
+			轻描时光漫长低唱语焉不详</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/nanjunxiao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/Junxiao Nan" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		<a href="http://www.zhihu.com/people/louis-90" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+		<a href="mailto:nanjunxiao@163.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+	
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="nanjunxiao">nanjunxiao</a>
+		
+		
+		</p>
+		<!--add counter by nanjunxiao, 2015-08-14-->
+		<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+		</script>
+		<span id="busuanzi_container_site_pv">
+			总访问量<span id="busuanzi_value_site_pv"></span>次
+		</span>
+		<br>
+		<span id="busuanzi_container_page_pv">
+			总阅读量<span id="busuanzi_value_page_pv"></span>次
+		</span>
+		<!--add counter by nanjunxiao, 2015-08-14-->
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

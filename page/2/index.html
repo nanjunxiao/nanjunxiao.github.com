@@ -1,0 +1,1015 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Nanjunxiao</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="nanjunxiao">
+    
+
+    
+    <meta name="description" content="ML+OR真香">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Nanjunxiao">
+<meta property="og:url" content="http://nanjunxiao.github.io/page/2/index.html">
+<meta property="og:site_name" content="Nanjunxiao">
+<meta property="og:description" content="ML+OR真香">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="nanjunxiao">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Nanjunxiao" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/%02.css">
+<link rel="stylesheet" href="/.css">
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/author.jpg" alt="Nanjunxiao" title="Nanjunxiao"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Nanjunxiao">Nanjunxiao</a></h1>
+				<h2 class="blog-motto">ML+OR真香</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:nanjunxiao.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main">
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/08/05/machine-learning-algorithm-cheat-sheet/" title="machine learning algorithm cheat sheet" itemprop="url">machine learning algorithm cheat sheet</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="nanjunxiao" target="_blank" itemprop="author">nanjunxiao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-08-05T15:21:46.000Z" itemprop="datePublished"> 发表于 2015-08-05</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>　　今天整理资料发现之前收集的比较好的机器学习cheat sheet和tips，这里备忘分享下~<br>　　<img src="../../../../img/sklearnml_map.png" alt="scikit-learn algorithm cheat sheet"><br>　　<img src="../../../../img/machine-learning-algorithm-cheat-sheet-microsoft-azure.png" alt="microsoft-azure machine learning algorithm cheat sheet"><br>　　![A few useful things to know about machine learning](../../../../img/A few useful things to know about machine learning.jpg)</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/机器学习/">机器学习</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/08/05/GBM之GBRT总结/" title="GBM之GBRT总结" itemprop="url">GBM之GBRT总结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="nanjunxiao" target="_blank" itemprop="author">nanjunxiao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-08-05T08:41:59.000Z" itemprop="datePublished"> 发表于 2015-08-05</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>　　GBM(gradient boosting machine)是一种ensemble机器学习框架，gradient boosting是boosting方法的一种，通过迭代拟合损失函数的负梯度值，我们常见的adaboost也是一种boosting方法，它通过迭代改变样本weight。</p>
+<h2 id="GBRT传统推导"><a href="#GBRT传统推导" class="headerlink" title="GBRT传统推导"></a>GBRT传统推导</h2><p>　　GBM基本思想就是让损失函数持续下降，每次迭代先求得关于累加函数F(x)的负梯度(- gradient)，然后通过弱学习器f(x)去拟合该负梯度，然后将弱学习器f累加到F得到新的F。这里将函数F类比于参数theta就好理解了，平时给定模型我们如何迭代求解参数theta？对嘛，我们先求关于theta的目标函数负梯度，然后再和原来的theta累加更新为新的theta。这样两者就统一起来了，只不过GBM模型开始不是给定的，需要对f相加求得F，这也是为啥是ensemble的原因。</p>
+<p>　　GBM可以处理分类/回归/排序问题，统一优化Object目标，区别仅在于损失函数不同而已，这个后面会推导。上面提到的弱学习器是回归模型，可以用各种回归模型，常见的是采用Tree based的Regression Tree，因此本文着重介绍GBRT(gradient boosting regression tree)。<strong>注:这里不用GBDT特指分类，统一使用GBRT，因为Object目标分类/回归没有本质区别，弱学习器统一做回归</strong>。</p>
+<p>　　GBM算法流程图如下：<br>　　　　　　<img src="../../../../img/gbmliucheng.png" alt=""></p>
+<p>　　首先计算负梯度方向，使用CART进行回归拟合gm，然后优化最优步长ρm，最后累加到F更新F。</p>
+<h2 id="GBRT-xgboost版本推导"><a href="#GBRT-xgboost版本推导" class="headerlink" title="GBRT xgboost版本推导"></a>GBRT xgboost版本推导</h2><p>　　利用梯度能够很直观理解，也画龙点睛到了GBRT中的gradient。但陈天奇大牛给出了更一般的推导，对loss做了二阶泰勒展开，引入了二阶倒数海森矩阵，并加入了正则项整体求最优，更加精确通用的描述了GBRT的来龙去脉。(陈天奇PPT  <a href="http://homes.cs.washington.edu/~tqchen/pdf/BoostedTree.pdf" target="_blank" rel="noopener">http://homes.cs.washington.edu/~tqchen/pdf/BoostedTree.pdf</a>)</p>
+<p>　　机器学习目标可以描述为<strong>Obj = Loss + regularization</strong>。</p>
+<p>　　回归的Loss可以选择square loss=(y-F)^2，y和F取值实数；分类的loss可以选择hinge loss=max(0,1-yF)或者logistic loss=ln(1+exp(-yF) )，y取值+1/-1，F取值实数；排序的loss可以选择pointwize(转为二分类问题)的hinge loss或者logistic loss，pairwize(xi-xj作为样本新x，转为二分类问题)的hinge loss，listwize的NDCG loss。下面给出几种loss function的效果对比，这里假设真实y=1情况，横坐标m表示预测值，纵坐标表示loss。<br>　　　　　　　　　　　　　　<img src="../../../../img/loss.png" alt=""></p>
+<p>　　蓝色的是0-1loss，用于分类表示错误个数，往往作为和其他loss对比的baseline，红色的表示hinge loss，黄色表示logistic loss，绿色表示adaboost loss=exp(-yF)，黑色表示square loss。从上图可以看出:Hinge/logistic对于噪音函数不敏感，因为当m&lt;0时，他们的反应不大，而square loss与adaboost loss可能更爱憎分明，尤其是square loss，因此对于分类问题square loss不太常用，更适合回归问题。</p>
+<p>　　可见回归/分类/排序并未有本质上的区别，都是去最小化Obj，<strong>唯一不同的就是哪种loss function更适合而已</strong>。</p>
+<p>　　因为现在的参数可以认为是在一个函数空间里面，我们不能采用传统的如SGD之类的算法来学习我们的模型，因此我们会采用一种叫做additive training的方式(boosting就是指additive training的意思)。每一次保留原来的模型不变，加入一个新的函数f到我们的模型中。<br>　　<img src="../../../../img/adaptivetraining.png" alt=""></p>
+<p>　　现在还剩下一个问题，我们如何选择每一轮加入什么f呢？答案是非常直接的，<strong><em>选取一个f来使得我们的目标函数尽量最大地降低</em></strong>。</p>
+<p>　　<img src="../../../../img/taylorexpansion.png" alt=""><br>　　<br>　　将目标Obj做二阶泰勒展开，除去常数项(包括l(y,y^(t-1) )  )，求得每个样本的一阶导g和二阶导h，将目标函数按叶子节点规约分组，得到下图。<br>　　<img src="../../../../img/youhuamubiaoguiyue.png" alt=""></p>
+<p>　　<img src="../../../../img/structurescore.png" alt=""></p>
+<p>　　如果树结构是固定的时候，上式中Obj有闭式最小值解-叶子节点score Wj，如上图。</p>
+<p>　　<br>　　<br>　　<img src="../../../../img/gain.png" alt=""><br>　　<img src="../../../../img/tanxinsplitsuanfa.png" alt=""></p>
+<p>　　然而不幸的是，这时的树还是未知的，不过可以按照Gain最大化去构造。如果暴力的枚举所有CART树分裂情况，计算太复杂了，这里可以采用贪心算法：<br>　　<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">　　遍历所有特征：</span><br><span class="line">	　　对每个特征所有取值排序</span><br><span class="line">	　　线性扫描<span class="number">1</span>遍，确定该特征最好分裂值</span><br></pre></td></tr></table></figure><br>　　最终得到所有特征中的最好特征最好分裂值，显然时间复杂度是<strong>O(nlogn*d*k)</strong>.</p>
+<p>　　我们可以发现，当推导目标的时候，像计算叶子节点分数和split分支这样的策略会自然地出现，<strong><em>而不再是像我们从书上学到的利用启发式规则，比如基于gini进行分支，叶子节点采用平均值</em></strong>。一切都有理可循，make sense!</p>
+<p>　　GBRT采用CART根据value值split成二叉树，因此适合数值特征，针对类别特征，需要进行one-hot-encoder编码。这也解释了我在<a href="http://nanjunxiao.github.io/2015/07/30/Kaggle%E5%AE%9E%E6%88%98%E4%B8%80/">kaggle实战(一)</a>中提到的，GBRT对高维稀疏特征效果不好，以及对于年月日这种特征，不进行one-hot编码直接采用数值效果好的原因。</p>
+<h2 id="xgboost"><a href="#xgboost" class="headerlink" title="xgboost"></a>xgboost</h2><p>　　陈天奇大牛开源了xgboost工具包(<a href="https://github.com/dmlc/xgboost)，" target="_blank" rel="noopener">https://github.com/dmlc/xgboost)，</a> 这是一个GBRT大规模并行开源框架。xgboost是各种比赛的利器，我参加的kaggle比赛基本都要用xgboost跑一组结果，同时也可应用到工业界。</p>
+<p>　　推荐大家有时间阅读学习下代码，可以参考陈天奇的PPT和网上的”xgboost导读和实战”，个人建议画出代码的UML类图，不清楚的细节用gbd断点打印调试。<br>　　<img src="../../../../img/xgboostuml.png" alt=""></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>　　gradient版本将f类比于参数，通过f对负梯度进行回归，通过负梯度逐渐最小化Object目标；xgboost版本通过使得当前Object目标最小化，构造出回归树f，更直接。两者都是求得f对历史累积F进行修正。</p>
+<p>　　对Obj进行二阶泰勒展开，是否可以像我上一篇<a href="http://nanjunxiao.github.io/2015/08/03/%E6%97%A0%E7%BA%A6%E6%9D%9F%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/">无约束优化算法总结</a>中写的，<strong>将传统的对负梯度的回归，改为对牛顿方向-H^-1*g的回归？</strong>GBRT是否有类似的NBRT名字？我感觉是可以的，至于为什么没有这么求解的还不清楚，求指导 :-)</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/机器学习/">机器学习</a><a href="/tags/GBRT/">GBRT</a><a href="/tags/xgboost/">xgboost</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/08/03/无约束优化算法总结/" title="无约束优化算法总结" itemprop="url">无约束优化算法总结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="nanjunxiao" target="_blank" itemprop="author">nanjunxiao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-08-03T14:10:56.000Z" itemprop="datePublished"> 发表于 2015-08-03</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>　　机器学习的优化目标一般可以表示成<strong>Obj = Loss + regularization</strong>，有了这样一个优化目标剩下就是如何求解最小化问题了。机器学习绝大多数Obj都是非线性的，很难有形式解，这时需要各种近似优化算法来求Obj的极小化。如果Obj是凸函数，那么极小值等价于全局最小值，否则极小值未必是全局最优值。这里将Obj抽象为f(x)，并<strong>假设f为凸函数，且二阶连续可导</strong>。</p>
+<h2 id="梯度下降法"><a href="#梯度下降法" class="headerlink" title="梯度下降法"></a>梯度下降法</h2><p>　　这个很常见也很简单，参数修正方向就是负梯度方向，步长可以定长也可以单独优化，即Xk+1 = Xk – lambda*grad.</p>
+<h2 id="牛顿法"><a href="#牛顿法" class="headerlink" title="牛顿法"></a>牛顿法</h2><p>　　牛顿法最初就是用来迭代求解方程根，想必大家高中时候都接触过。原理是利用泰勒公式在x0处一阶展开，即f(x)=f(x0)+f’(x0)(x-x0)。求解方程f(x)=0得，x=x1=x0-f(x0)/f’(x0)，由于泰勒展开只是近似等价，所以这里的x1也只是比x0更接近f(x)=0的近似解，所以需要不断的迭代来逼近真实x。牛顿法通过下图一目了然：<br>　　　　　　　　　　　　　　　　<img src="../../../../img/niudunfa.png" alt=""></p>
+<p>　　牛顿法不是用来求根的吗，那怎么用来求最优化？直观的，求f(x)的最小值，必要条件是f’(x)=0，so，可以用牛顿法来求f’(x)=0的解！</p>
+<p>　　下面还是来公式推导下，还是利用泰勒公式,二阶展开，f(x+deltax)=f(x)+f’(x)deltax+1/2f’’(x)deltax^2。当deltax无限趋近于0，上面式子近似为f’(x)deltax+f’’(x)deltax^2=0，即deltax = - f’(x)/f’’(x)。所以迭代公式为xk+1 = xk-f’(x)/f’’(x)。</p>
+<p>　　牛顿法比梯度下降更容易收敛，速度更快，一般认为牛顿法利用了曲线更多的信息（二阶导数）。根据wiki上的解释，从几何上说，牛顿法就是用一个二次曲面去拟合你当前所处位置的局部曲面，而梯度下降法是用一个平面去拟合当前的局部曲面，通常情况下，二次曲面的拟合会比平面更好，所以牛顿法选择的下降路径会更符合真实的最优下降路径（<em>from 知乎</em>）。如下形象图，红色曲线是利用牛顿法迭代求解，绿色曲线是利用梯度下降法求解。<br>　　　　　　　　　　　　　　　　　　<img src="../../../../img/yijieerjieduibi.png" alt=""></p>
+<p>　　扩展下对于多元x，梯度变为梯度向量，二阶导变为海森矩阵(Hessian matrix)，分别用字母g和H表示，迭代方向变为-H^-1g称为牛顿方向。</p>
+<p>　　　　　　<img src="../../../../img/niudunfasuanfatu.png" alt=""><br>　　　　　　<img src="../../../../img/zuniniudunfasuanfatu.png" alt=""></p>
+<p>　　阻尼牛顿法相比牛顿法增加了步长lambda的精确搜索。</p>
+<h2 id="拟牛顿法"><a href="#拟牛顿法" class="headerlink" title="拟牛顿法"></a>拟牛顿法</h2><p>　　牛顿法存在两个主要缺点：</p>
+<p>　　1. 需要计算海森矩阵和它的逆，计算复杂度高而且空间复杂度为O(N^2)<br>　　2. 有时海森矩阵无法保证正定，算法失效。</p>
+<p>　　针对上面问题，研究者提出拟牛顿法(Quasi-Newton methond)，基本思想是不直接求海森阵或其逆，而是通过梯度构造出海森矩阵(或其逆)的近似，而且是正定对称的。</p>
+<p>　　符号上用B表示对海森矩阵H的近似，D表示对逆矩阵H^-1的近似，Sk=Xk+1-Xk，yk=gk+1-gk。</p>
+<p>　　各种拟牛顿法都需要满足<strong>拟牛顿条件</strong>：yk=Bk+1<em>Sk或者Sk=Dk+1</em>yk。下面大致介绍下DFP/BFGS/L-BFGS拟牛顿算法。</p>
+<h4 id="1-DFP算法"><a href="#1-DFP算法" class="headerlink" title="1. DFP算法"></a>1. DFP算法</h4><p>　　　　　　<img src="../../../../img/dfpsuanfa.png" alt=""></p>
+<p>　　在步骤3还需要计算gk+1，下同。</p>
+<h4 id="2-BFGS算法"><a href="#2-BFGS算法" class="headerlink" title="2. BFGS算法"></a>2. BFGS算法</h4><p>　　　　　　<img src="../../../../img/bfgs1suanfa.png" alt=""></p>
+<p>　　这时从海森阵计算逆计算量也不小，通过Sherman-Morrison公式，可以直接得到B的逆的递推关系，将B的逆替换为D，这样我们得到另一种BFGS。</p>
+<p>　　　　　　　　　　<img src="../../../../img/Sherman-Morrison.png" alt=""><br>　　　　　　<img src="../../../../img/bfgs2suanfa.png" alt=""></p>
+<h4 id="3-L-BFGS算法"><a href="#3-L-BFGS算法" class="headerlink" title="3.L-BFGS算法"></a>3.L-BFGS算法</h4><p>　　上面的拟牛顿法都没有解决<strong>空间复杂度O(N^2)</strong>的问题，为了解决该问题，我们就不能存储海森或其逆矩阵了。想想时间换空间，我们就只能存储生成海森的s和y向量了，需要海森时计算得出。而且，向量s和y也不是所有都存，而是固定存最新的m组。每次计算D时，只利用最新的m组s和y，这样空间复杂度降到了<strong>O(mN)</strong>.</p>
+<p>　　若记ρk=1/yk^T*sk，Vk=I-ρkyksk^T，算法2.3的步骤6可以近似为<br>　　　　　　<img src="../../../../img/jisijieguo.png" alt=""></p>
+<p>　　由于V和ρ标号增加方向相反所以需要前后分别遍历，总计两次遍历才能计算D。</p>
+<p>　　由BFGS算法流程可知，求Dk*gk获取搜索方向才是最终目的，因此论文(<em>updating quasi-newton matrices with limited storage</em>)设计出了一种Dk*gk快速算法：</p>
+<p>　　　　　　　　<img src="../../../../img/lbfgssuanfa.png" alt=""></p>
+<p>　　注意倒数第二行beta应该是i下标，最后算出的rL即为Dk*gk的值。</p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>　　本文算法截图来自博客(<a href="http://blog.csdn.net/itplus/article/details/21897715" target="_blank" rel="noopener">http://blog.csdn.net/itplus/article/details/21897715</a>) ,感谢原作者的分享。</p>
+<p>　　上面讨论的都是f(x)可导的情况，针对不可导还有一些变种算法，比如OWL-QN，有时间再研究总结。</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/机器学习/">机器学习</a><a href="/tags/LBFGS/">LBFGS</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/08/01/搜索引擎结果自动化抽取通用算法/" title="搜索引擎结果自动化抽取通用算法" itemprop="url">搜索引擎结果自动化抽取通用算法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="nanjunxiao" target="_blank" itemprop="author">nanjunxiao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-08-01T06:40:02.000Z" itemprop="datePublished"> 发表于 2015-08-01</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>回顾了下2011年开发的元搜索自动抽取组件，当时的定位是<strong>全自动通用</strong>。算法适用于所有搜索引擎和新加的微博检索，或者说类似结构的网页，因为业务比较专一吧，效果还是不错的，准确率召回率均超过95%。大概总结下:-)</p>
+<p><a href="https://github.com/nanjunxiao/Arise" target="_blank" rel="noopener">代码请移步到我的github</a>    <a href="https://github.com/nanjunxiao/Arise" target="_blank" rel="noopener">https://github.com/nanjunxiao/Arise</a></p>
+<h2 id="算法介绍"><a href="#算法介绍" class="headerlink" title="算法介绍"></a>算法介绍</h2><p><img src="../../../../img/Arise.png" alt=""></p>
+<p>如上图大致是一个检索结果页面的DOM树结构，算法大致流程如下：</p>
+<ol>
+<li><p>找到所有锚文本链接</p>
+</li>
+<li><p>进行分组（Xpath相同的锚文本链接）</p>
+</li>
+<li><p>求出每组的最小父块(最小父节点子树)，找出字符数超过body子树字符总数一半的最小父块，这时可能有多个最小父块，找子树最小的（即Xpath路径最长的），即html-…-div-…-div。这之后可能还有多个相同的最小父块，这时的最小父块就为<font color='red'>数据区域块</font>，如图阴影区域。需要记录下最小父块为数据区域块的链接组和其在链接组中的位置的对应关系。</p>
+</li>
+<li><p>对最小父块是数据区域块的链接组求出平均锚文本链接长度（文本链接比），最长的即为记录锚文本链接，比如绿色文本链接比大，绿色的就为记录锚文本链接</p>
+</li>
+<li><p>求记录锚文本链接相对<font color='red'>数据区域块</font>的最大父节点，即数据区域的第一层孩子节点，作为<font color='green'>数据记录块</font>。</p>
+</li>
+<li><p>找到<font color='green'>数据记录块</font>后，此处利用第一个和最后一个传统数据记录进行扩展，可以识别出其中的新型数据记录。</p>
+<p>（想用标签名、class属性识别新型数据记录，很难对所有搜索引擎都适用，从而做成通用的）</p>
+</li>
+<li><p>数据记录块生成子树，抽取所需元信息 </p>
+</li>
+</ol>
+<p>这里强调下3/4的顺序，由于右侧广告推广的文本链接比可能也很大，通过3可以去掉右侧广告噪音的影响。</p>
+<h2 id="性能指标"><a href="#性能指标" class="headerlink" title="性能指标"></a>性能指标</h2><ol>
+<li><p>准确率/召回率都超过95%</p>
+</li>
+<li><p>平均处理速度10ms/page</p>
+</li>
+</ol>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>由于当时的定位是<strong>全自动通用</strong>,所以本算法采用了启发式规则。</p>
+<p>如果现在重做，我可能会直接使用类似scrapy的xpath配置文件，毕竟短平快；或者复杂点利用记录的父/子/左右兄弟节点位置/标签/字数等属性构造特征，直接二分类来搞。</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/project/">project</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/抽取/">抽取</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/07/31/Kaggle实战二/" title="Kaggle实战(二)" itemprop="url">Kaggle实战(二)</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="nanjunxiao" target="_blank" itemprop="author">nanjunxiao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-07-31T07:53:48.000Z" itemprop="datePublished"> 发表于 2015-07-31</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>上一篇都是针对小数据集的，入门不建议从大数据集开始，可以不用考虑机器内存，不用out-of-core的online learning，不用考虑分布式，可以专注模型本身。</p>
+<p>接下来我做了两个广告CTR预估相关的比赛，不过比赛当时都已经closed了，还好，我们还可以提交结果看看close时能排到的位置。</p>
+<h2 id="比赛实战"><a href="#比赛实战" class="headerlink" title="比赛实战"></a>比赛实战</h2><h3 id="6-Display-Advertising-Challenge"><a href="#6-Display-Advertising-Challenge" class="headerlink" title="6.    Display Advertising Challenge"></a>6.    Display Advertising Challenge</h3><p>Predict click-through rates on display ads. <a href="https://www.kaggle.com/c/criteo-display-ad-challenge" target="_blank" rel="noopener">https://www.kaggle.com/c/criteo-display-ad-challenge</a></p>
+<p>这是一个广告CTR预估的比赛，由知名广告公司Criteo赞助举办。数据包括4千万训练样本，500万测试样本，特征包括13个数值特征，26个类别特征，评价指标为logloss。</p>
+<p>CTR工业界做法一般都是LR，只是特征会各种组合/transform，可以到上亿维。这里我也首选LR，特征缺失值我用的众数，对于26个类别特征采用one-hot编码，数值特征我用pandas画出来发现不符合正态分布，有很大偏移，就没有scale到[0,1]，采用的是根据五分位点（<em>min,25%,中位数,75%,max<em>）切分为6个区间(</em>负值/过大值分别分到了1和6区间作为异常值处理</em>)，然后一并one-hot编码，最终特征100万左右，训练文件20+G。</p>
+<p>强调下可能遇到的坑：1.one-hot最好自己实现，除非你机器内存足够大(<em>需全load到numpy，而且非sparse</em>);2.LR最好用SGD或者mini-batch，而且out-of-core模式(<a href="http://scikit-learn.org/stable/auto_examples/applications/plot_out_of_core_classification.html#example-applications-plot-out-of-core-classification-py" target="_blank" rel="noopener">http://scikit-learn.org/stable/auto_examples/applications/plot_out_of_core_classification.html#example-applications-plot-out-of-core-classification-py</a>), 除非还是你的内存足够大;3.Think twice before code.由于数据量大，中间出错重跑的话时间成品比较高。</p>
+<p>我发现sklearn的LR和liblinear的LR有着截然不同的表现，sklearn的L2正则化结果好于L1，liblinear的L1好于L2，我理解是他们优化方法不同导致的。最终结果liblinear的LR的L1最优，logloss=<strong>0.46601</strong>，LB为<strong>227th/718</strong>，这也正符合lasso产生sparse的直觉。<br>![](../../../../img/Display Advertising Challenge.png) </p>
+<p>我也单独尝试了xgboost，logloss=0.46946，可能还是和GBRT对高维度sparse特征效果不好有关。Facebook有一篇论文把GBRT输出作为transformed feature喂给下游的线性分类器，取得了不错的效果，可以参考下。（<em>Practical Lessons from Predicting Clicks on Ads at Facebook</em>）</p>
+<p>我只是简单试验了LR作为baseline，后面其实还有很多搞法，可以参考forum获胜者给出的solution，比如：1. Vowpal Wabbit工具不用区分类别和数值特征；2.libFFM工具做特征交叉组合；3.feature hash trick；4.每个特征的评价点击率作为新特征加入；5.多模型ensemble等。</p>
+<h3 id="7-Avito-Context-Ad-Clicks"><a href="#7-Avito-Context-Ad-Clicks" class="headerlink" title="7.    Avito Context Ad Clicks"></a>7.    Avito Context Ad Clicks</h3><p>Predict if context ads will earn a user’s click. <a href="https://www.kaggle.com/c/avito-context-ad-clicks" target="_blank" rel="noopener">https://www.kaggle.com/c/avito-context-ad-clicks</a></p>
+<p>跟上一个CTR比赛不同的是，这个数据没有脱敏，特征有明确含义，userinfo/adinfo/searchinfo等特征需要和searchstream文件 join起来构成完整的训练/测试样本。数据包含392356948条训练样本，15961515条测试样本，特征基本都是id类别特征和query/title等raw text特征。评价指标还是logloss。</p>
+<p>由于数据量太大，跑一组结果太过耗时，根据比赛6的参考，目前我只选择liblinear lasso LR做了一组结果。最终目标是预测contextual ad，为了减小数据量，*searchstream都过滤了非contextual的，visitstream和phonerequeststream及params目前我都没有使用，但其实都是很有价值的特征（<em>比如query和title各种similarity</em>），后面可以尝试。</p>
+<p>对于这种大数据，在小内存机器上sklearn和pandas处理起来已经非常吃力了，这时就需要自己定制实现left join和one-hot-encoder了，采用按行这种out-of-core方式，不过真心是慢啊。类似比赛6，price数值特征还是三分位映射成了类别特征和其他类别特征一起one-hot，最终特征大概600万左右，当然要用sparse矩阵存储了，train文件大小40G。</p>
+<p>Libliear貌似不支持mini-batch,为了省事没办法只好找一台大内存服务器专门跑lasso LR了。由于上面过滤了不少有价值信息，也没有类似libFM或libFFM做特征交叉组合，效果不好，logloss只有0.05028，LB排名248th/414。<br>![](../../../../img/Avito Context Ad Clicks.png)</p>
+<p>对于该比赛需要好好调研下大牛们的做法，看看相关paper了，自己瞎搞跑一遍太耗时间了，加油吧~</p>
+<h2 id="总结与感悟"><a href="#总结与感悟" class="headerlink" title="总结与感悟"></a>总结与感悟</h2><p>通过参加kaggle提高了自己的机器学习实战能力，对问题和数据有了一些感觉，大致了解了各模型的适用场景。当然还有很多需要提高，比如特征组合/transform/hash trick，模型ensemble方法等，实现的scalable(比如采用pipeline)。</p>
+<p>Ps:一定要挑选几个适合自己的高效工具包，并对其中2-3个看过源码，最好能做到定制优化。希望大家都加入到kaggle，欢迎一起探讨提高~</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/机器学习/">机器学习</a><a href="/tags/kaggle/">kaggle</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/07/30/Kaggle实战一/" title="Kaggle实战(一)" itemprop="url">Kaggle实战(一)</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="nanjunxiao" target="_blank" itemprop="author">nanjunxiao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-07-30T15:45:25.000Z" itemprop="datePublished"> 发表于 2015-07-30</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>第一次接触kaggle比赛，是在听完台大林轩田老师的机器学习基石和技法课程之后。都说实践出真知，为了系统的巩固下机器学习实战技能，成为一名合格的数据挖掘工程师，我踏入了kaggle大门。</p>
+<p>参加比赛很耗费时间和精力，由于本人已经工作，只能利用业余时间有选择的参加，希望能从中学到东西。我选择的比赛都是有监督的学习（当然用到了非监督方法，比如Bag of Words Meets Bags of Popcorn就用到了Collapsed Gibbs LDA），概括起来就是分类/排序/回归。下面就跟大家分享下近两个月我参加的比赛，欢迎一起探讨。</p>
+<h2 id="工欲善其事，必先利其器"><a href="#工欲善其事，必先利其器" class="headerlink" title="工欲善其事，必先利其器"></a>工欲善其事，必先利其器</h2><p>首先介绍下我经常使用的机器学习工具:</p>
+<ol>
+<li><strong>scikit-learn</strong>. 涵盖了基本能想到的各种机器学习算法，由于本人python党，我把它当作matlab和R的替代品。</li>
+<li><strong>xgboost</strong>. 华盛顿大学机器学习大牛陈天奇出品的GBRT框架，果然是刷比赛利器。</li>
+<li><strong>liblinear/libsvm</strong>. 台大林智仁团队的佳作，工业界很多也在用。</li>
+<li><strong>pandas</strong>. 处理数据python包，DataFrame那叫一个好用。</li>
+</ol>
+<h2 id="机器学习流程"><a href="#机器学习流程" class="headerlink" title="机器学习流程"></a>机器学习流程</h2><p>拿到一个比赛，我的一般套路是：</p>
+<ol>
+<li><strong>读懂比赛介绍，明确是哪类问题</strong>:分类/排序/回归。</li>
+<li><strong>数据特征处理</strong>。这个是最耗时也是最重要的，正所谓“<strong><em>数据和特征决定了效果上限，模型和算法决定了逼近这个上限的程度</em></strong>”。其实这点我还有很大欠缺，汗！</li>
+<li><strong>Cross validation数据集切分</strong>。数据集很大完全可以hold out一份作为测试集（<em>不是待提交结果的测试集，此处是用来CV的</em>），数据集偏小就需要K-fold或者Leave-one-out了，如果训练集有时序关系，还要注意测试集选取最后时间片的。这点我自我批评，有时为了省事，直接就提交结果做CV了。咳咳，这有点像imagenet比赛作弊了，只是我没用小号增加提交次数。</li>
+<li><strong>常用算法/默认参数跑结果作为baseline</strong>。这个需要一些经验和直觉，一般来说Tree Based的Random Forest和GBRT效果都不会太烂，如果特征维度很大很稀疏这时就需要试试线性SVM和LR了。</li>
+<li><strong>接下来就是调参了</strong>，这个我也没用太多经验，一般就是GridSearchCV或者RandomizedSearchCV。有人推荐Hyperopt库，接下来调研下。</li>
+<li><strong>迭代</strong>。为了取得比较好的结果，下面就是2/3/4/5不断迭代了。</li>
+<li><strong>Blending</strong>.上面说的都是单模型，最后让你结果更general/low variance，提升一个档次的就是结果ensemble了（<em>不是指gbrt/rf的ensemble，是多种模型的融合</em>）。这里我一般就是简单的多种模型结果的averaging（weighted）or voting，这里推荐一篇ensemble selection  paper(<a href="http://www.cs.cornell.edu/~alexn/papers/shotgun.icml04.revised.rev2.pdf)。" target="_blank" rel="noopener">http://www.cs.cornell.edu/~alexn/papers/shotgun.icml04.revised.rev2.pdf)。</a></li>
+</ol>
+<h2 id="比赛实战"><a href="#比赛实战" class="headerlink" title="比赛实战"></a>比赛实战</h2><h3 id="1-Bike-Sharing-Demand"><a href="#1-Bike-Sharing-Demand" class="headerlink" title="1. Bike Sharing Demand"></a>1. Bike Sharing Demand</h3><p>Forecast use of a city bikeshare system. <a href="https://www.kaggle.com/c/bike-sharing-demand" target="_blank" rel="noopener">https://www.kaggle.com/c/bike-sharing-demand</a></p>
+<p>这是一个回归问题，最后预测租车数量。这里需要注意一点，最后总数实际等于casual+registered。原始共10个特征，包括datetime特征，season/holiday等类别特征，temp/atemp等数值特征，没有特征缺失值。评价指标为RMSLE，其实就是RMSE原来的p和a加1取ln。</p>
+<p>当时正在研究GBRT，所以使用了xgboost。由于使用RMSLE，xgboost自带的loss是square loss，eval_metric是RMSE，这时两种选择1.修改xgboost代码，派生新的优化objective，求新objective的gradient（一阶导）/hessian（二阶导），派生新的eval_metric；2.训练数据的y做ln(y+1)转化，最后预测时再做exp(y^)-1就转回来了。当然2简单了，我也是这么实施的。</p>
+<p>关于数据特征处理，datetime转成y/m/d/h/dayofweek，y/m等类别特征由于有连续性，这里没有做one-hot编码。经过cv最后cut掉了日/season。</p>
+<p>Xgboost参数其实没有怎么去调，shrinkage=0.1，tree_num=1000，depth=6，其他默认。</p>
+<p>效果三次提升拐点分别是：1.RMSE转换为RMLSE(<em>square loss转为square log loss</em>)，说明预测值的范围很大，log转化后bound更tight了；2.cut了日/season特征；3.转换为对casual和registered的分别回归问题，在加和。最后RMLSE结果为<strong>0.36512</strong>，public LB最好为30位，最终private LB为<strong>28</strong>，还好说明没有overfit。<br>![](../../../../img/Bike Sharing Demand.png) </p>
+<h3 id="2-Bag-of-Words-Meets-Bags-of-Popcorn"><a href="#2-Bag-of-Words-Meets-Bags-of-Popcorn" class="headerlink" title="2. Bag of Words Meets Bags of Popcorn"></a>2. Bag of Words Meets Bags of Popcorn</h3><p>Use Google’s Word2Vec for movie reviews. <a href="https://www.kaggle.com/c/word2vec-nlp-tutorial" target="_blank" rel="noopener">https://www.kaggle.com/c/word2vec-nlp-tutorial</a></p>
+<p>这是一个文本情感二分类问题。25000的labeled训练样本，只有一个raw text 特征”review“。评价指标为AUC，所以这里提交结果<strong>需要用概率</strong>，我开始就掉坑里了，结果一直上不来。</p>
+<p>比赛里有教程如何使用word2vec进行二分类，可以作为入门学习材料。我没有使用word embeddinng，直接采用BOW及ngram作为特征训练，效果还凑合，后面其实可以融合embedding特征试试。对于raw text我采用TfidfVectorizer(stop_words=’english’, ngram_range=(1,3), sublinear_tf=True, min_df=2)，并采用卡方检验进行特征选择，经过CV，最终确定特征数为200000。</p>
+<p>单模型我选取了GBRT/NB/LR/linear SVC。GBRT一般对于维度较大比较稀疏效果不是很好，但对于该数据表现不是很差。NB采用MultinomialNB效果也没有想象的那么惊艳。几个模型按效果排序为linear SVC(0.95601)&gt;LR(0.94823)&gt;GBRT(0.94173)&gt;NB(0.93693)，看来线性SVM在文本上还是很强悍的。</p>
+<p>后续我又采用LDA生成主题特征，本来抱着很大期望，现实还是那么骨感，采用上述单模型AUC最好也只有0.93024。既然单独使用主题特征没有提高，那和BOW融合呢？果然work了!后面试验证实特征融合还是linear SVC效果最好，LDA主题定为500，而且不去除停用词效果更好，AUC为<strong>0.95998</strong>。</p>
+<p>既然没有时间搞单模型了，还有最后一招，多模型融合。这里有一个原则就是模型尽量多样，不一定要求指标最好。最终我选取5组不是很差的多模型结果进行average stacking，AUC为<strong>0.96115</strong>，<strong>63</strong>位。最终private LB跌倒了<strong>71st</strong>，应该融合word enbedding试试，没时间细搞了。<br>![](../../../../img/Bag of Words Meets Bags of Popcorn.png) </p>
+<h3 id="3-Titanic-Machine-Learning-from-Disaster"><a href="#3-Titanic-Machine-Learning-from-Disaster" class="headerlink" title="3. Titanic: Machine Learning from Disaster"></a>3. Titanic: Machine Learning from Disaster</h3><p>Predict survival on the Titanic. <a href="https://www.kaggle.com/c/titanic" target="_blank" rel="noopener">https://www.kaggle.com/c/titanic</a></p>
+<p>硬二分类问题，不需要预测概率，给出0/1即可，评价指标为accuracy。说句题外话，网上貌似有遇难者名单，LB上好几个score 1.0的。有坊间说，score超过90%就怀疑作弊了，不知真假，不过top300绝大多数都集中在0.808-0.818。这个题目我后面没有太多的改进想法了，求指导啊~</p>
+<p>数据包括数值和类别特征，并存在缺失值。类别特征这里我做了one-hot-encode，缺失值是采用均值/中位数/众数需要根据数据来定，我的做法是根据pandas打印出列数据分布来定。</p>
+<p>模型我采用了DT/RF/GBDT/SVC，由于xgboost输出是概率，需要指定阈值确定0/1，可能我指定不恰当，效果不好<strong>0.78847</strong>。效果最好的是RF，<strong>0.81340</strong>。这里经过筛选我使用的特征包括’Pclass’,’Gender’, ‘Cabin’,’Ticket’,’Embarked’,’Title’进行onehot编码，’Age’,’SibSp’,’Parch’,’Fare’,’class_age’,’Family’ 归一化。我也尝试进行构建一些新特征和特征组合，比如title分割为Mr/Mrs/Miss/Master四类或者split提取第一个词，添加fare_per_person等，pipeline中也加入feature selection，但是效果都没有提高，求指导~<br><img src="../../../../img/Titanic.png" alt=""></p>
+<h3 id="4-San-Francisco-Crime-Classification"><a href="#4-San-Francisco-Crime-Classification" class="headerlink" title="4. San Francisco Crime Classification"></a>4. San Francisco Crime Classification</h3><p>Predict the category of crimes that occurred in the city by the bay. <a href="https://www.kaggle.com/c/sf-crime" target="_blank" rel="noopener">https://www.kaggle.com/c/sf-crime</a></p>
+<p>这是一个多分类问题，一般三种处理方法：<strong>one vs all, one vs one, softmax</strong>，信息损失逐渐递减。87809条训练数据，数据包括datetime/类别/数值特征，没有缺失值，label共39种。评价指标为logloss，这里要说下和AUC的区别，<strong>AUC更强调相对排序</strong>。</p>
+<p>我抽取后特征包括year,m,d,h,m,dow,district,address,x,y，模型选择softmax objective的LR和xgboost。这两个模型对特征挑食，有不同的偏好，LR喜好0/1类别或者locale到0-1的数值特征，而xgboost更喜好原始的数值特征，而且对缺失值也能很好的处理。所以对于LR就是2个归一化的数值特征和8个待one-hot编码的特征，对于xgboost是8个原始数值特征（包括year/m/d等，具有连续性）和2个待one-hot编码的特征。</p>
+<p>LR效果要略好于xgboost效果，logloss分别为<strong>2.28728/2.28869</strong>，最好位置为<strong>3rd</strong>，目前跌到<strong>4th</strong>，后面找时间再搞一搞。<br>![](../../../../img/San Francisco Crime Classification.png)</p>
+<h3 id="5-Caterpillar-Tube-Pricing"><a href="#5-Caterpillar-Tube-Pricing" class="headerlink" title="5. Caterpillar Tube Pricing"></a>5. Caterpillar Tube Pricing</h3><p>Model quoted prices for industrial tube assemblies. <a href="https://www.kaggle.com/c/caterpillar-tube-pricing" target="_blank" rel="noopener">https://www.kaggle.com/c/caterpillar-tube-pricing</a></p>
+<p>这也是一个回归问题，预测tube报价。30213条训练样本，特征分散在N个文件中，需要你left join起来。评价指标为RMLSE，哈哈，是不是很熟悉？对，跟bike sharing的一样，所以怎么转换知道了吧？看，做多了套路trick也就了然了。感觉这个需要领域知识，但其实有些特征我是不知道含义的，anyway，先merge所有特征不加domain特征直接搞起。</p>
+<p>这是我见过小样本里特征处理最麻烦的(<em>后面的CTR大数据处理更耗时</em>)，它特征分散在多个文件中，还好我们有神器pandas，直接<strong>left join</strong>搞定。这里有些trick需要注意，比如comp_*文件要用append不能join，这样正好是一个全集，否则就会多个weight特征了。特征存在缺失值，这里我全部采用0值，不知是否恰当？</p>
+<p>模型我主要试了RF和xgboost，RF tree_num=1000，其他默认值，RMLSE=0.255201，主要精力放在了xgboost上，调了几次参数(<em>depth=58,col_sample=0.75,sample=0.85,shrinkage=0.01,tree_num=2000</em>)，最好<strong>RMLSE=0.231220</strong>，最好位置<strong>120th</strong>，目前跌倒<strong>206th</strong>了，看来需要好好搞搞特征了！<br>![](../../../../img/Caterpillar Tube Pricing.png) </p>
+<h2 id="Join-Kaggle"><a href="#Join-Kaggle" class="headerlink" title="Join Kaggle"></a>Join Kaggle</h2><p>你看我搞的还凑合吧，so，快来加入kaggle吧，求组队:-)<br><img src="../../../../img/mykaggle.png" alt=""></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/机器学习/">机器学习</a><a href="/tags/kaggle/">kaggle</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/07/29/hello-world/" title="Hello World" itemprop="url">Hello World</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="nanjunxiao" target="_blank" itemprop="author">nanjunxiao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-07-28T16:00:00.000Z" itemprop="datePublished"> 发表于 2015-07-29</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Welcome to <a href="http://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+
+  <nav id="page-nav" class="clearfix">
+    <a class="extend prev" rel="prev" href="/">&lt;span&gt;&lt;&#x2F;span&gt;Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+  </nav>
+
+</div>
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/机器学习/NLP/" title="NLP">NLP<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/project/" title="project">project<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/机器学习/推荐/" title="推荐">推荐<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/机器学习/" title="机器学习">机器学习<sup>14</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kaggle/" title="kaggle">kaggle<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NLP/" title="NLP">NLP<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/LDA/" title="LDA">LDA<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GBRT/" title="GBRT">GBRT<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/xgboost/" title="xgboost">xgboost<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/强化学习/" title="强化学习">强化学习<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Actor-Critic/" title="Actor-Critic">Actor-Critic<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TREC/" title="TREC">TREC<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ranking-SVM/" title="Ranking SVM">Ranking SVM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TensorFlow/" title="TensorFlow">TensorFlow<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Gibbs-Sampling/" title="Gibbs Sampling">Gibbs Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/architecture/" title="architecture">architecture<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SVM/" title="SVM">SVM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/LR/" title="LR">LR<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BP/" title="BP">BP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NB/" title="NB">NB<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/EM/" title="EM">EM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GMM/" title="GMM">GMM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HMM/" title="HMM">HMM<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.52ml.net" target="_blank" title="我爱机器学习">我爱机器学习</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.52nlp.cn/" target="_blank" title="我爱自然语言处理">我爱自然语言处理</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://cos.name/" target="_blank" title="统计之都">统计之都</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.flickering.cn/" target="_blank" title="腾讯广点通">腾讯广点通</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.searchtb.com/?spm=0.0.0.0.9jn6ZC" target="_blank" title="搜索技术博客－淘宝">搜索技术博客－淘宝</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://stblog.baidu-tech.com/" target="_blank" title="百度搜索研发部官方博客">百度搜索研发部官方博客</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://tech.meituan.com/" target="_blank" title="美团技术博客">美团技术博客</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/itplus?viewmode=contents" target="_blank" title="peghoty机器学习">peghoty机器学习</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://coolshell.cn/" target="_blank" title="陈皓">陈皓</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/solstice/" target="_blank" title="陈硕">陈硕</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://mindhacks.cn/" target="_blank" title="刘未鹏">刘未鹏</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 此生多勉强 此身越重洋 <br/>
+			轻描时光漫长低唱语焉不详</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/nanjunxiao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/Junxiao Nan" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		<a href="http://www.zhihu.com/people/louis-90" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+		<a href="mailto:nanjunxiao@163.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+	
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="nanjunxiao">nanjunxiao</a>
+		
+		
+		</p>
+		<!--add counter by nanjunxiao, 2015-08-14-->
+		<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+		</script>
+		<span id="busuanzi_container_site_pv">
+			总访问量<span id="busuanzi_value_site_pv"></span>次
+		</span>
+		<br>
+		<span id="busuanzi_container_page_pv">
+			总阅读量<span id="busuanzi_value_page_pv"></span>次
+		</span>
+		<!--add counter by nanjunxiao, 2015-08-14-->
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+ </html>

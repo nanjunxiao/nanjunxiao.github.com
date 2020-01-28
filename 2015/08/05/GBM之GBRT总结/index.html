@@ -1,0 +1,654 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>GBM之GBRT总结 | Nanjunxiao</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="nanjunxiao">
+    
+
+    
+    <meta name="description" content="GBM(gradient boosting machine)是一种ensemble机器学习框架，gradient boosting是boosting方法的一种，通过迭代拟合损失函数的负梯度值，我们常见的adaboost也是一种boosting方法，它通过迭代改变样本weight。 GBRT传统推导　　GBM基本思想就是让损失函数持续下降，每次迭代先求得关于累加函数F(x)的负梯度(- grad">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GBM之GBRT总结">
+<meta property="og:url" content="http://nanjunxiao.github.io/2015/08/05/GBM%E4%B9%8BGBRT%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Nanjunxiao">
+<meta property="og:description" content="GBM(gradient boosting machine)是一种ensemble机器学习框架，gradient boosting是boosting方法的一种，通过迭代拟合损失函数的负梯度值，我们常见的adaboost也是一种boosting方法，它通过迭代改变样本weight。 GBRT传统推导　　GBM基本思想就是让损失函数持续下降，每次迭代先求得关于累加函数F(x)的负梯度(- grad">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/gbmliucheng.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/loss.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/adaptivetraining.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/taylorexpansion.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/youhuamubiaoguiyue.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/structurescore.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/gain.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/tanxinsplitsuanfa.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/xgboostuml.png">
+<meta property="article:published_time" content="2015-08-05T08:41:59.000Z">
+<meta property="article:modified_time" content="2020-01-26T08:17:15.089Z">
+<meta property="article:author" content="nanjunxiao">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="GBRT">
+<meta property="article:tag" content="xgboost">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://nanjunxiao.github.io/img/gbmliucheng.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Nanjunxiao" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/%02.css">
+<link rel="stylesheet" href="/.css">
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/author.jpg" alt="Nanjunxiao" title="Nanjunxiao"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Nanjunxiao">Nanjunxiao</a></h1>
+				<h2 class="blog-motto">ML+OR真香</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:nanjunxiao.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/08/05/GBM之GBRT总结/" title="GBM之GBRT总结" itemprop="url">GBM之GBRT总结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="nanjunxiao" target="_blank" itemprop="author">nanjunxiao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-08-05T08:41:59.000Z" itemprop="datePublished"> 发表于 2015-08-05</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#GBRT传统推导"><span class="toc-number">1.</span> <span class="toc-text">GBRT传统推导</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GBRT-xgboost版本推导"><span class="toc-number">2.</span> <span class="toc-text">GBRT xgboost版本推导</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#xgboost"><span class="toc-number">3.</span> <span class="toc-text">xgboost</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<p>　　GBM(gradient boosting machine)是一种ensemble机器学习框架，gradient boosting是boosting方法的一种，通过迭代拟合损失函数的负梯度值，我们常见的adaboost也是一种boosting方法，它通过迭代改变样本weight。</p>
+<h2 id="GBRT传统推导"><a href="#GBRT传统推导" class="headerlink" title="GBRT传统推导"></a>GBRT传统推导</h2><p>　　GBM基本思想就是让损失函数持续下降，每次迭代先求得关于累加函数F(x)的负梯度(- gradient)，然后通过弱学习器f(x)去拟合该负梯度，然后将弱学习器f累加到F得到新的F。这里将函数F类比于参数theta就好理解了，平时给定模型我们如何迭代求解参数theta？对嘛，我们先求关于theta的目标函数负梯度，然后再和原来的theta累加更新为新的theta。这样两者就统一起来了，只不过GBM模型开始不是给定的，需要对f相加求得F，这也是为啥是ensemble的原因。</p>
+<p>　　GBM可以处理分类/回归/排序问题，统一优化Object目标，区别仅在于损失函数不同而已，这个后面会推导。上面提到的弱学习器是回归模型，可以用各种回归模型，常见的是采用Tree based的Regression Tree，因此本文着重介绍GBRT(gradient boosting regression tree)。<strong>注:这里不用GBDT特指分类，统一使用GBRT，因为Object目标分类/回归没有本质区别，弱学习器统一做回归</strong>。</p>
+<p>　　GBM算法流程图如下：<br>　　　　　　<img src="../../../../img/gbmliucheng.png" alt=""></p>
+<p>　　首先计算负梯度方向，使用CART进行回归拟合gm，然后优化最优步长ρm，最后累加到F更新F。</p>
+<h2 id="GBRT-xgboost版本推导"><a href="#GBRT-xgboost版本推导" class="headerlink" title="GBRT xgboost版本推导"></a>GBRT xgboost版本推导</h2><p>　　利用梯度能够很直观理解，也画龙点睛到了GBRT中的gradient。但陈天奇大牛给出了更一般的推导，对loss做了二阶泰勒展开，引入了二阶倒数海森矩阵，并加入了正则项整体求最优，更加精确通用的描述了GBRT的来龙去脉。(陈天奇PPT  <a href="http://homes.cs.washington.edu/~tqchen/pdf/BoostedTree.pdf" target="_blank" rel="noopener">http://homes.cs.washington.edu/~tqchen/pdf/BoostedTree.pdf</a>)</p>
+<p>　　机器学习目标可以描述为<strong>Obj = Loss + regularization</strong>。</p>
+<p>　　回归的Loss可以选择square loss=(y-F)^2，y和F取值实数；分类的loss可以选择hinge loss=max(0,1-yF)或者logistic loss=ln(1+exp(-yF) )，y取值+1/-1，F取值实数；排序的loss可以选择pointwize(转为二分类问题)的hinge loss或者logistic loss，pairwize(xi-xj作为样本新x，转为二分类问题)的hinge loss，listwize的NDCG loss。下面给出几种loss function的效果对比，这里假设真实y=1情况，横坐标m表示预测值，纵坐标表示loss。<br>　　　　　　　　　　　　　　<img src="../../../../img/loss.png" alt=""></p>
+<p>　　蓝色的是0-1loss，用于分类表示错误个数，往往作为和其他loss对比的baseline，红色的表示hinge loss，黄色表示logistic loss，绿色表示adaboost loss=exp(-yF)，黑色表示square loss。从上图可以看出:Hinge/logistic对于噪音函数不敏感，因为当m&lt;0时，他们的反应不大，而square loss与adaboost loss可能更爱憎分明，尤其是square loss，因此对于分类问题square loss不太常用，更适合回归问题。</p>
+<p>　　可见回归/分类/排序并未有本质上的区别，都是去最小化Obj，<strong>唯一不同的就是哪种loss function更适合而已</strong>。</p>
+<p>　　因为现在的参数可以认为是在一个函数空间里面，我们不能采用传统的如SGD之类的算法来学习我们的模型，因此我们会采用一种叫做additive training的方式(boosting就是指additive training的意思)。每一次保留原来的模型不变，加入一个新的函数f到我们的模型中。<br>　　<img src="../../../../img/adaptivetraining.png" alt=""></p>
+<p>　　现在还剩下一个问题，我们如何选择每一轮加入什么f呢？答案是非常直接的，<strong><em>选取一个f来使得我们的目标函数尽量最大地降低</em></strong>。</p>
+<p>　　<img src="../../../../img/taylorexpansion.png" alt=""><br>　　<br>　　将目标Obj做二阶泰勒展开，除去常数项(包括l(y,y^(t-1) )  )，求得每个样本的一阶导g和二阶导h，将目标函数按叶子节点规约分组，得到下图。<br>　　<img src="../../../../img/youhuamubiaoguiyue.png" alt=""></p>
+<p>　　<img src="../../../../img/structurescore.png" alt=""></p>
+<p>　　如果树结构是固定的时候，上式中Obj有闭式最小值解-叶子节点score Wj，如上图。</p>
+<p>　　<br>　　<br>　　<img src="../../../../img/gain.png" alt=""><br>　　<img src="../../../../img/tanxinsplitsuanfa.png" alt=""></p>
+<p>　　然而不幸的是，这时的树还是未知的，不过可以按照Gain最大化去构造。如果暴力的枚举所有CART树分裂情况，计算太复杂了，这里可以采用贪心算法：<br>　　<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">　　遍历所有特征：</span><br><span class="line">	　　对每个特征所有取值排序</span><br><span class="line">	　　线性扫描<span class="number">1</span>遍，确定该特征最好分裂值</span><br></pre></td></tr></table></figure><br>　　最终得到所有特征中的最好特征最好分裂值，显然时间复杂度是<strong>O(nlogn*d*k)</strong>.</p>
+<p>　　我们可以发现，当推导目标的时候，像计算叶子节点分数和split分支这样的策略会自然地出现，<strong><em>而不再是像我们从书上学到的利用启发式规则，比如基于gini进行分支，叶子节点采用平均值</em></strong>。一切都有理可循，make sense!</p>
+<p>　　GBRT采用CART根据value值split成二叉树，因此适合数值特征，针对类别特征，需要进行one-hot-encoder编码。这也解释了我在<a href="http://nanjunxiao.github.io/2015/07/30/Kaggle%E5%AE%9E%E6%88%98%E4%B8%80/">kaggle实战(一)</a>中提到的，GBRT对高维稀疏特征效果不好，以及对于年月日这种特征，不进行one-hot编码直接采用数值效果好的原因。</p>
+<h2 id="xgboost"><a href="#xgboost" class="headerlink" title="xgboost"></a>xgboost</h2><p>　　陈天奇大牛开源了xgboost工具包(<a href="https://github.com/dmlc/xgboost)，" target="_blank" rel="noopener">https://github.com/dmlc/xgboost)，</a> 这是一个GBRT大规模并行开源框架。xgboost是各种比赛的利器，我参加的kaggle比赛基本都要用xgboost跑一组结果，同时也可应用到工业界。</p>
+<p>　　推荐大家有时间阅读学习下代码，可以参考陈天奇的PPT和网上的”xgboost导读和实战”，个人建议画出代码的UML类图，不清楚的细节用gbd断点打印调试。<br>　　<img src="../../../../img/xgboostuml.png" alt=""></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>　　gradient版本将f类比于参数，通过f对负梯度进行回归，通过负梯度逐渐最小化Object目标；xgboost版本通过使得当前Object目标最小化，构造出回归树f，更直接。两者都是求得f对历史累积F进行修正。</p>
+<p>　　对Obj进行二阶泰勒展开，是否可以像我上一篇<a href="http://nanjunxiao.github.io/2015/08/03/%E6%97%A0%E7%BA%A6%E6%9D%9F%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/">无约束优化算法总结</a>中写的，<strong>将传统的对负梯度的回归，改为对牛顿方向-H^-1*g的回归？</strong>GBRT是否有类似的NBRT名字？我感觉是可以的，至于为什么没有这么求解的还不清楚，求指导 :-)</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/机器学习/">机器学习</a><a href="/tags/GBRT/">GBRT</a><a href="/tags/xgboost/">xgboost</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://nanjunxiao.github.io/2015/08/05/GBM%E4%B9%8BGBRT%E6%80%BB%E7%BB%93/" data-title="GBM之GBRT总结 | Nanjunxiao" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/08/05/machine-learning-algorithm-cheat-sheet/" title="machine learning algorithm cheat sheet">
+  <strong>上一篇：</strong><br/>
+  <span>
+  machine learning algorithm cheat sheet</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/08/03/无约束优化算法总结/"  title="无约束优化算法总结">
+ <strong>下一篇：</strong><br/> 
+ <span>无约束优化算法总结
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#GBRT传统推导"><span class="toc-number">1.</span> <span class="toc-text">GBRT传统推导</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GBRT-xgboost版本推导"><span class="toc-number">2.</span> <span class="toc-text">GBRT xgboost版本推导</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#xgboost"><span class="toc-number">3.</span> <span class="toc-text">xgboost</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/机器学习/NLP/" title="NLP">NLP<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/project/" title="project">project<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/机器学习/推荐/" title="推荐">推荐<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/机器学习/" title="机器学习">机器学习<sup>14</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/机器学习/" title="机器学习">机器学习<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kaggle/" title="kaggle">kaggle<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NLP/" title="NLP">NLP<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/LDA/" title="LDA">LDA<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GBRT/" title="GBRT">GBRT<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/xgboost/" title="xgboost">xgboost<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/强化学习/" title="强化学习">强化学习<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Actor-Critic/" title="Actor-Critic">Actor-Critic<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TREC/" title="TREC">TREC<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ranking-SVM/" title="Ranking SVM">Ranking SVM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/TensorFlow/" title="TensorFlow">TensorFlow<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Gibbs-Sampling/" title="Gibbs Sampling">Gibbs Sampling<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/architecture/" title="architecture">architecture<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SVM/" title="SVM">SVM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/LR/" title="LR">LR<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BP/" title="BP">BP<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NB/" title="NB">NB<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/EM/" title="EM">EM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GMM/" title="GMM">GMM<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HMM/" title="HMM">HMM<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.52ml.net" target="_blank" title="我爱机器学习">我爱机器学习</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.52nlp.cn/" target="_blank" title="我爱自然语言处理">我爱自然语言处理</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://cos.name/" target="_blank" title="统计之都">统计之都</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.flickering.cn/" target="_blank" title="腾讯广点通">腾讯广点通</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.searchtb.com/?spm=0.0.0.0.9jn6ZC" target="_blank" title="搜索技术博客－淘宝">搜索技术博客－淘宝</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://stblog.baidu-tech.com/" target="_blank" title="百度搜索研发部官方博客">百度搜索研发部官方博客</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://tech.meituan.com/" target="_blank" title="美团技术博客">美团技术博客</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/itplus?viewmode=contents" target="_blank" title="peghoty机器学习">peghoty机器学习</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://coolshell.cn/" target="_blank" title="陈皓">陈皓</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/solstice/" target="_blank" title="陈硕">陈硕</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://mindhacks.cn/" target="_blank" title="刘未鹏">刘未鹏</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 此生多勉强 此身越重洋 <br/>
+			轻描时光漫长低唱语焉不详</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/nanjunxiao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/Junxiao Nan" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		<a href="http://www.zhihu.com/people/louis-90" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+		<a href="mailto:nanjunxiao@163.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+	
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="nanjunxiao">nanjunxiao</a>
+		
+		
+		</p>
+		<!--add counter by nanjunxiao, 2015-08-14-->
+		<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+		</script>
+		<span id="busuanzi_container_site_pv">
+			总访问量<span id="busuanzi_value_site_pv"></span>次
+		</span>
+		<br>
+		<span id="busuanzi_container_page_pv">
+			总阅读量<span id="busuanzi_value_page_pv"></span>次
+		</span>
+		<!--add counter by nanjunxiao, 2015-08-14-->
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
