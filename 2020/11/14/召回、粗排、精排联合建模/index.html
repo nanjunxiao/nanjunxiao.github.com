@@ -18,18 +18,18 @@
 <meta property="og:site_name" content="Nanjunxiao">
 <meta property="og:description" content="背景 推荐漏斗由上图召回、粗排、精排、重排、曝光级联构成，item量级从千万到个逐级递减，同时获得从用户行为开始的逐级反向隐式反馈。 为了简化问题，这里暂不考虑重排反馈，直接将行为反馈作为精排输入，但实际上是需要考虑的。 一般情况下，召回、粗排、精排可能是三个小组在各自优化，没有考虑联合建模，简单使用用户行为反馈数据进行各自模型训练，这里会存在以下问题：  离线用户行为反馈数据vs线上实际预估数据">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://nanjunxiao.github.io/img/%E8%81%94%E5%90%88%E5%BB%BA%E6%A8%A1/%E6%8E%A8%E8%8D%90%E6%BC%8F%E6%96%97.png">
-<meta property="og:image" content="http://nanjunxiao.github.io/img/%E8%81%94%E5%90%88%E5%BB%BA%E6%A8%A1/%E7%B2%BE%E6%8E%92%E8%92%B8%E9%A6%8F%E5%8F%AC%E5%9B%9E.png">
-<meta property="og:image" content="http://nanjunxiao.github.io/img/%E8%81%94%E5%90%88%E5%BB%BA%E6%A8%A1/%E7%B2%BE%E6%8E%92%E8%92%B8%E9%A6%8F%E5%8F%AC%E5%9B%9E%E5%92%8C%E7%B2%97%E6%8E%92.png">
-<meta property="og:image" content="http://nanjunxiao.github.io/img/%E8%81%94%E5%90%88%E5%BB%BA%E6%A8%A1/%E6%A0%B7%E6%9C%AC.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/co_model/%E6%8E%A8%E8%8D%90%E6%BC%8F%E6%96%97.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/co_model/%E7%B2%BE%E6%8E%92%E8%92%B8%E9%A6%8F%E5%8F%AC%E5%9B%9E.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/co_model/%E7%B2%BE%E6%8E%92%E8%92%B8%E9%A6%8F%E5%8F%AC%E5%9B%9E%E5%92%8C%E7%B2%97%E6%8E%92.png">
+<meta property="og:image" content="http://nanjunxiao.github.io/img/co_model/%E6%A0%B7%E6%9C%AC.png">
 <meta property="article:published_time" content="2020-11-14T14:52:25.000Z">
-<meta property="article:modified_time" content="2020-11-14T15:22:58.073Z">
+<meta property="article:modified_time" content="2020-11-14T16:25:25.116Z">
 <meta property="article:author" content="nanjunxiao">
 <meta property="article:tag" content="推荐">
 <meta property="article:tag" content="蒸馏">
 <meta property="article:tag" content="级联">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://nanjunxiao.github.io/img/%E8%81%94%E5%90%88%E5%BB%BA%E6%A8%A1/%E6%8E%A8%E8%8D%90%E6%BC%8F%E6%96%97.png">
+<meta name="twitter:image" content="http://nanjunxiao.github.io/img/co_model/%E6%8E%A8%E8%8D%90%E6%BC%8F%E6%96%97.png">
 
     
     <link rel="alternative" href="/atom.xml" title="Nanjunxiao" type="application/atom+xml">
@@ -113,7 +113,7 @@
 		
 		</div>
 		
-		<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p><img src="../../../../img/%E8%81%94%E5%90%88%E5%BB%BA%E6%A8%A1/%E6%8E%A8%E8%8D%90%E6%BC%8F%E6%96%97.png" alt="推荐漏斗"></p>
+		<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p><img src="../../../../img/co_model/%E6%8E%A8%E8%8D%90%E6%BC%8F%E6%96%97.png" alt="推荐漏斗"></p>
 <p>推荐漏斗由上图召回、粗排、精排、重排、曝光级联构成，item量级从千万到个逐级递减，同时获得从用户行为开始的逐级反向隐式反馈。</p>
 <p>为了简化问题，这里暂不考虑重排反馈，直接将行为反馈作为精排输入，但实际上是需要考虑的。</p>
 <p>一般情况下，召回、粗排、精排可能是三个小组在各自优化，没有考虑联合建模，简单使用用户行为反馈数据进行各自模型训练，这里会存在以下问题：</p>
@@ -127,14 +127,14 @@
 <li>模型维度</li>
 </ol>
 <p>有一拖二、一拖三、蒸馏等各种玩法，这里列举2个实用有代表性的：</p>
-<p><img src="../../../../img/%E8%81%94%E5%90%88%E5%BB%BA%E6%A8%A1/%E7%B2%BE%E6%8E%92%E8%92%B8%E9%A6%8F%E5%8F%AC%E5%9B%9E.png" alt="精排蒸馏召回(粗排)"></p>
-<p><img src="../../../../img/%E8%81%94%E5%90%88%E5%BB%BA%E6%A8%A1/%E7%B2%BE%E6%8E%92%E8%92%B8%E9%A6%8F%E5%8F%AC%E5%9B%9E%E5%92%8C%E7%B2%97%E6%8E%92.png" alt="精排蒸馏召回和粗排"></p>
+<p><img src="../../../../img/co_model/%E7%B2%BE%E6%8E%92%E8%92%B8%E9%A6%8F%E5%8F%AC%E5%9B%9E.png" alt="精排蒸馏召回(粗排)"></p>
+<p><img src="../../../../img/co_model/%E7%B2%BE%E6%8E%92%E8%92%B8%E9%A6%8F%E5%8F%AC%E5%9B%9E%E5%92%8C%E7%B2%97%E6%8E%92.png" alt="精排蒸馏召回和粗排"></p>
 <ol start="2">
 <li>样本维度</li>
 </ol>
 <p>利用下游的级联反馈可以补充有价值的正负样本，以召回为例：</p>
 <p>负样本：可以将随机负采样、粗排尾部、精排尾部、曝光负样本按不同置信权重构建几个等级负样本。</p>
-<p><img src="../../../../img/%E8%81%94%E5%90%88%E5%BB%BA%E6%A8%A1/%E6%A0%B7%E6%9C%AC.png" alt="样本"></p>
+<p><img src="../../../../img/co_model/%E6%A0%B7%E6%9C%AC.png" alt="样本"></p>
 <p>正样本：类似地，可以将粗排头部、精排头部、曝光正样本按不同置信权重构建几个等级正样本。</p>
 <h3 id="多任务"><a href="#多任务" class="headerlink" title="多任务"></a>多任务</h3><p>类比单任务，可以对多任务中每个目标进行单任务联合建模，然后在漏斗的每一层执行和重排一致的多目标融合。</p>
 <p>另一种思路是，只训练一个综合模型，不以某个特定任务为训练目标，召回、粗排以多目标融合后头部为正样本，尾部及随机负采样为负样本。</p>
